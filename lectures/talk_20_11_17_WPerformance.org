@@ -130,7 +130,7 @@
 #+END_EXPORT
 :end:
 
-* Introduction
+* Motivation and Introduction
 ** Public Evidence for a Lack of Reproducibility
 \small
 #+LaTeX: \vspace{-.3cm}\begin{overlayarea}{1\linewidth}{7cm}
@@ -690,32 +690,27 @@ To err is human.
 
 * Resources and Acknowledgments
 ** Resources and Acknowledgments
-#+BEGIN_CENTER
-[[https://github.com/alegrand/SMPE/raw/master/lectures/talk_20_10_08_DUISN.pdf][https://github.com/schnorr/SMPE/raw/master/lectures/talk_20_11_17_WPerformance.pdf]]
-#+END_CENTER
-
-*** Book pic                                                        :BMCOL:
+*** Top                                                               :BMCOL:
 :PROPERTIES:
-:BEAMER_col: .17
+:BEAMER_col: 1
 :BEAMER_OPT: t
 :END:
-#+LaTeX: \fbox{\includegraphics[width=\linewidth,valign=t]{images/book_rr.pdf}}
-*** Book                                                            :BMCOL:
-:PROPERTIES:
-:BEAMER_col: .83
-:BEAMER_OPT: t
-:END:
-  \vspace{1cm}
 
-  [[https://rr-france.github.io/bookrr/][A non-technical introduction to reproducibility issues]] (in French)
-  - Loïc Desquilbet, Sabrina Granger, Boris Hejblum, Pascal Pernot,
-    Nicolas Rougier
-  \vspace{1cm}
-*** squeeze                                               :B_ignoreheading:
+Slides are available here
+ #+BEGIN_CENTER
+ [[https://github.com/alegrand/SMPE/raw/master/lectures/talk_20_10_08_DUISN.pdf][https://github.com/schnorr/SMPE/raw/master/lectures/talk_20_11_17_WPerformance.pdf]]
+ #+END_CENTER
+
+ Thanks to
+ - [[http://polaris.imag.fr/arnaud.legrand/][Arnaud Legrand]] for sharing slides and knowledge about this topic
+ - My [[https://www.inf.ufrgs.br/~schnorr/students.html][laboratory students]] that have understood the importance
+   - It may be hard to face/learn new things, but they are essential to evolve!
+
+*** squeeze                                                 :B_ignoreheading:
 :PROPERTIES:
 :BEAMER_env: ignoreheading
 :END:
-\vspace{-2mm}\pause
+\vspace{1cm}
 *** MOOC                                                            :BMCOL:
 :PROPERTIES:
 :BEAMER_col: .69
@@ -731,7 +726,7 @@ transparent science]], Learning Lab Inria
 :BEAMER_col: .35
 :BEAMER_OPT: t
 :END:
-#+LaTeX: \includegraphics[width=\linewidth,valign=t]{images/mooc_rr.png}
+#+LaTeX: \includegraphics[width=.8\linewidth,valign=t]{images/mooc_rr.png}
 
 *** Links                                                 :B_ignoreheading:
 :PROPERTIES:
