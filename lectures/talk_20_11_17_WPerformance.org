@@ -480,12 +480,12 @@ file:images/platform_diversity.png
 #   - execution in the cloud: continuous integration and codeocean
 
 ** Tool 1: Computational Notebooks/Literate Programming
-#+LaTeX: \includegraphics<+>[width=\linewidth]{images/example_pi_full-1.pdf}%
-#+LaTeX: \includegraphics<+>[width=\linewidth]{images/example_pi_full-2.pdf}%
-#+LaTeX: \includegraphics<+>[width=\linewidth]{images/example_pi_full-3.pdf}%
-#+LaTeX: \includegraphics<+>[width=\linewidth]{images/example_pi_full-4.pdf}%
-#+LaTeX: \includegraphics<+>[width=\linewidth]{images/example_pi_full-5.pdf}%
-#+LaTeX: \includegraphics<+->[width=\linewidth]{images/example_pi_full-6.pdf}%
+#+LaTeX: \includegraphics<+>[width=.9\linewidth]{images/example_pi_full-1.pdf}%
+#+LaTeX: \includegraphics<+>[width=.9\linewidth]{images/example_pi_full-2.pdf}%
+#+LaTeX: \includegraphics<+>[width=.9\linewidth]{images/example_pi_full-3.pdf}%
+#+LaTeX: \includegraphics<+>[width=.9\linewidth]{images/example_pi_full-4.pdf}%
+#+LaTeX: \includegraphics<+>[width=.9\linewidth]{images/example_pi_full-5.pdf}%
+#+LaTeX: \includegraphics<+->[width=.9\linewidth]{images/example_pi_full-6.pdf}%
 
 #+BEGIN_EXPORT latex
 \begin{overlayarea}{\linewidth}{0cm}
@@ -698,7 +698,7 @@ To err is human.
 
 Slides are available here
  #+BEGIN_CENTER
- [[https://github.com/alegrand/SMPE/raw/master/lectures/talk_20_10_08_DUISN.pdf][https://github.com/schnorr/SMPE/raw/master/lectures/talk_20_11_17_WPerformance.pdf]]
+ [[https://github.com/schnorr/SMPE/raw/master/lectures/talk_20_11_17_WPerformance.pdf][https://github.com/schnorr/SMPE/raw/master/lectures/talk_20_11_17_WPerformance.pdf]]
  #+END_CENTER
 
  Thanks to
