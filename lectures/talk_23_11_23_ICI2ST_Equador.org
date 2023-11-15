@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 # -*- mode: org -*-
 #+Title:   Reproducibilidad en Experimentos Computacionales
-#+Author: Lucas Mello Schnorr (with Arnaud Legrand)\medskip\newline\logoInstitutions
+#+Author: Lucas Mello Schnorr\medskip\newline\logoInstitutions
 #+DATE:  \vspace{3cm}ICI2ST Conference, November 23rd 2023\newline\begin{overlayarea}{1.05\linewidth}{0cm}\vspace{-3.2cm}\hfill{\mylogo}\end{overlayarea}\vspace{-1.0cm}
 #+LANGUAGE: en
 #+STARTUP: beamer indent inlineimages logdrawer
@@ -96,7 +96,7 @@
 #+LATEX_HEADER: \def\winkey{\Winkey[1][yellow]}
 #+LATEX_HEADER: \def\JDEVlogo{\raisebox{-1.3em}{\includegraphics[height=1cm]{./images/Logo_Grid5000.png}}}
 #+LATEX_HEADER: \def\mylogo{\includegraphics[height=2.5cm]{./images/in_science_we_trust.jpg}}
-#+LATEX_HEADER: \def\logoInstitutions{\includegraphics[height=.7cm]{./images/ufrgs.png}\quad\includegraphics[height=.7cm]{./images/Logo-UGA2020.pdf}\quad\includegraphics[height=.7cm]{./images/Logo-CNRS.pdf}\quad\includegraphics[height=.7cm]{./images/Logo-Inria.pdf}\vspace{-.7cm}}
+#+LATEX_HEADER: \def\logoInstitutions{\includegraphics[height=1cm]{./images/ufrgs.png}}
 #+LATEX_HEADER: %\usepackage{pgf}  
 #+LATEX_HEADER: %\logo{\pgfputat{\pgfxy(-2,6.5)}{\pgfbox[center,base]{\includegraphics[height=1cm]{./images/jdevLogo.pdf}}}}
 
