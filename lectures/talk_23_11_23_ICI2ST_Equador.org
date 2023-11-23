@@ -165,6 +165,48 @@
 #+latex: \def\nosection#1{}
 #+latex: \let\section=\nosection
 
+* Record of Questions and Answers
+
+1. What area/field in which the lack of reproducibility can harm or
+   hinder progress in human and technology development the most is?
+
+   - Answer: I think the lack of reproducibility can harm many fields,
+     but computer reproducibility (the fact that changing computer
+     architecture and software changes results) is one of the most
+     important because that can really impact all science fields.
+
+2. Lucas, Why shouldn't we use Git LFS?
+
+   - We could indeed use Git LFS. The problem is that servers usually
+     have a size limit for the files. The best solution we have found
+     so far is the one provided by Zenodo, which does not have any
+     limit size. The advantage of Zenodo is that it provides you with
+     a trackable DOI, which is something unavailable in GIT-oriented
+     servers (hash commits are usually not tracked - and you can
+     rewrite the commit history - so a hash might disappear in the
+     future).
+
+3. Some experiments are run over private datasets, or the algorithms
+   used are proprietary, at the end, is this kind of research useful
+   for the community?
+
+   - If the datasets and software is proprietary, it represents poor
+     value for the general science in general because there is no
+     transparency, with without transparency, consensus becomes
+     impossible.
+
+4. Can we think about having stardardized protocols in the next future
+   in computer science?
+
+   - That will be something to discuss indeed. The issue is that
+     computer science has so many possible configurations (think about
+     the amount of configurations possible for a deep learning
+     training session, for instance) that turns out standard protocols
+     very hard to establish (it may fix too much the amount of studies
+     you could run). But perhaps having a basic set of
+     recommendations, such as the ones I've listed during the end of
+     the talk will be sufficient.
+   
 * Test                                                             :noexport:
 * 
 #+latex: \let\section=\oldsection
