@@ -206,7 +206,20 @@
      you could run). But perhaps having a basic set of
      recommendations, such as the ones I've listed during the end of
      the talk will be sufficient.
-   
+
+5. Everybody knows how important reproducibility is, why it should be
+   encouraged like it is something new in the social aspect of a
+   research?
+
+   - Indeed, I agree with you that the topic of reproducibility
+     shouldn't be sell as something new, but something that is
+     inherent attached to science in general. The issue is that
+     nowadays simply too much research (articles, reports) does not
+     use reproducible methods, even if there are enough
+     solutions/tools. So, we are basically encouraging people that
+     conduct research to actually put into practice these tools that
+     enable reproducible research simply because they are available.
+
 * Test                                                             :noexport:
 * 
 #+latex: \let\section=\oldsection
