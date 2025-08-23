@@ -17,11 +17,11 @@
 #+OPTIONS:   H:2 num:t toc:nil \n:nil @:t ::t |:t ^:nil -:t f:t *:t <:t
 #+LATEX_COMPILER: lualatex -shell-escape
 #+LATEX_HEADER: \usedescriptionitemofwidthas{bl}
-#+LATEX_HEADER: \usepackage[T1]{fontenc}
-#+LATEX_HEADER: \usepackage[utf8]{inputenc}
+#+LATEX_HEADER: %\usepackage[T1]{fontenc}
+#+LATEX_HEADER: %\usepackage[utf8]{inputenc}
 #+LATEX_HEADER: \usepackage{figlatex}
 #+LATEX_HEADER: \usepackage[french]{babel}
-#+LATEX_HEADER: %\usepackage{DejaVuSansMono}
+#+LATEX_HEADER: \usepackage{DejaVuSansMono}
 #+LATEX_HEADER: \usepackage{ifthen,amsmath,amstext,gensymb,amssymb}
 #+LATEX_HEADER: \usepackage{relsize}
 #+LATEX_HEADER: \usepackage{boxedminipage,xspace,multicol}
