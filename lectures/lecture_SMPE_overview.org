@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 # -*- mode: org -*-
 #+Title:  Scientific Methodology and \newline (Empirical|Experimental) Evaluation
-#+Author: Arnaud Legrand\medskip\newline\logoInstitutions
-#+DATE:  \vspace{3cm}\JDEVlogo Master 2 MOSIG\newline 2024-2025 \newline\begin{overlayarea}{1.05\linewidth}{0cm}\vspace{-3.2cm}\hfill{\mylogo}\end{overlayarea}\vspace{-1.0cm}
+#+Author: Lucas M. Schnorr\medskip\newline\logoInstitutions
+#+DATE:  \vspace{3cm}\JDEVlogo Comp. Syst. Perf. Analysis\newline PPGC/INF/UFRGS \newline\begin{overlayarea}{1.05\linewidth}{0cm}\vspace{-3.2cm}\hfill{\mylogo}\end{overlayarea}\vspace{-1.0cm}
 #+LANGUAGE: en
 #+STARTUP: beamer indent inlineimages logdrawer
 #+TAGS: noexport(n)
@@ -78,7 +78,7 @@
 #+LATEX_HEADER: \def\winkey{\Winkey[1][yellow]}
 #+LATEX_HEADER: \def\JDEVlogo{}%\includegraphics[height=1cm]{./images/jdevLogo.pdf}}
 #+LATEX_HEADER: \def\mylogo{\includegraphics[height=2.5cm]{./images/in_science_we_trust.jpg}}
-#+LATEX_HEADER: \def\logoInstitutions{\includegraphics[height=.7cm]{./images/Logo-UGA2020.pdf}\quad\includegraphics[height=.7cm]{./images/Logo-CNRS.pdf}\quad\includegraphics[height=.7cm]{./images/Logo-Inria.pdf}\includegraphics[height=.7cm]{./images/logo-lig-new.png}\vspace{-.7cm}}
+#+LATEX_HEADER: \def\logoInstitutions{\includegraphics[height=.9cm]{./images/INF-UFRGS.png}\quad\includegraphics[height=.9cm]{./images/UFRGS.png}\vspace{-.7cm}}
 #+LATEX_HEADER: %\usepackage{pgf}  
 #+LATEX_HEADER: %\logo{\pgfputat{\pgfxy(-2,6.5)}{\pgfbox[center,base]{\includegraphics[height=1cm]{./images/jdevLogo.pdf}}}}
 
@@ -146,9 +146,11 @@
 #+END_EXPORT
 :end:
 * Overview
-** Teachers and contact
+** Acknowledgement
 
 # #+latex: \includegraphics[height=3cm]{../sessions/2021_10_Grenoble/elise.png}
+
+Thanks to these people to kindly making this material available.
 
 #+begin_center
 #+latex: \includegraphics[height=3cm]{../sessions/2021_10_Grenoble/celine.png}
@@ -156,12 +158,8 @@
 #+latex: \includegraphics[height=3cm]{../sessions/2021_10_Grenoble/arnaud.png}
 #+latex: \includegraphics[height=3cm]{../sessions/2021_10_Grenoble/jean-marc.png}
 #+end_center
-- Resources ::  
-  - Github \hfill(schedule, slides, homeworks)
-  - MOOC   \hfill(Learn reproducible research by yourself)
-- Communication ::  
-  - Pad    \hfill (notes and homework reporting)
-  - Mattermost\hfill (questions, references, ...)
+Celine, Cyril, Arnaud, and Jean-Marc 
+
 ** Quick Poll
 - Python
 - R
