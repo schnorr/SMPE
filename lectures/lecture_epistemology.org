@@ -4,7 +4,7 @@
 #+STARTUP: beamer overview indent
 #+TAGS: noexport(n)
 #+LaTeX_CLASS: beamer
-#+LaTeX_CLASS_OPTIONS: [11pt,xcolor=dvipsnames,presentation]
+#+LaTeX_CLASS_OPTIONS: [10pt,xcolor=dvipsnames,presentation]
 #+OPTIONS:   H:3 num:t toc:nil \n:nil @:t ::t |:t ^:nil -:t f:t *:t <:t
 #+LATEX_HEADER: \input{org-babel-style-preembule.tex}
 #+LATEX_HEADER: %\let\tmptableofcontents=\tableofcontents
