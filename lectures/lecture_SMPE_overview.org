@@ -471,7 +471,7 @@ increasingly numerous and complex/
 
 \normalsize
 *Learn and Teach* using online resources like
-- [[https://software-carpentry.org/][Software Carpentry]], [[https://the-turing-way.netlify.app/welcome.html][The Turing Way]], ...
+- [[https://software-carpentry.org/][Software Carpentry]], [[https://book.the-turing-way.org/][The Turing Way]], ...
 ** The Reproducible Research MOOC 
 *** MOOC                                                            :BMCOL:
 :PROPERTIES:
