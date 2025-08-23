@@ -488,16 +488,6 @@ The 2nd *MOOC "Advanced RR"* has been released in +2021+ 2024
   - \footnotesize Scientific workflow
 \vspace{-.7cm}
 
-** Homeworks 
-- [ ] Indicate your name on the Pad.
-- [ ] Register on the Mattermost.
-- [ ] Set up a *public* github or gitlab project for this lecture.
-- [ ] Register to the MOOC
-- [ ] Follow modules 1 + 2 of the MOOC with as much exercises as possible
-- [ ] Set up a computational document system (e.g., Rstudio or Jupyter)
-- [ ] Report the URL of your git project, your mattermost ID on the Pad.
-- [ ] Start learning R by reading my short /R crash course for computer scientists/
-
 * Emacs Setup                                                      :noexport:
 This document has local variables in its postembule, which should
 allow Org-mode (9) to work seamlessly without any setup. If you're
