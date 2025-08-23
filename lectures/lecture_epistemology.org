@@ -25,33 +25,13 @@
 #+LaTeX: \input{org-babel-document-preembule.tex}
 #+LaTeX: %\let\tableofcontents=\tmptableofcontents
 #+LaTeX: %\tableofcontents
-* Organization
-*** Outline
-Look at the course's webpage:
-#+BEGIN_CENTER
-  #+LaTeX: \href{https://tinyurl.com/SMPE-Rennes}{https://tinyurl.com/SMPE-Rennes}
-#+END_CENTER
-Please, take notes, share thoughts/questions/ideas/answers in the
-*pad*. Answer the *poll*.
-
-
-_Tentative (and evolving) agenda_:
-- *Tuesday* Epistemology + Reproducible research ; R crash course ; literate programming
-- *Wednesday* Data visualization/presentation with R; Introduction to probabilities/statistics ; Linear regression
-- *Thursday* Playing with a nice data set; Design of Experiments 
-
-_Stuff to know about this course_:
-- Way too much stuff for so little time. The slides are extremely
-  dense and I speak very fast. *Don't panic! Feel free to interrupt*
-- Slides are self-content with many [[https://github.com/alegrand/SMPE][links]] and =code examples=
-- Try to put into practice asap to get the most out of it
 * \textsc{Science}: What is this thing called Science ?
 *** Outline
 \tableofcontents
 *** About Science
 
 #+BEGIN_CENTER
-*Question 1*: _In less than 5 lines give a definition of "Science" _
+*Question 1*: _In less than 5 lines give a definition of "Science"_
 #+END_CENTER
 \pause\small
 
