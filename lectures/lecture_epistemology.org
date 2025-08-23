@@ -1,5 +1,5 @@
-#+TITLE:     A bit of Epistemology...
-#+AUTHOR:    Arnaud Legrand
+#+TITLE:     Epistemology of Science
+#+AUTHOR:    Lucas M. Schnorr
 #+DATE: Performance Evaluation Lecture
 #+STARTUP: beamer overview indent
 #+TAGS: noexport(n)
