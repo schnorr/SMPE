@@ -1689,7 +1689,7 @@ _Main benefit:_
     advantage* \medskip
   - Our research becomes *sound*, *deeper*, *auditable*, *more visible*,
     *reusable*
-*** Webinars: Learning by Doing
+*** Webinars: Learning by Doing                                  :noexport:
 # for i in `find /home/alegrand/Work/Documents/Enseignements/RR_webinars/ -name 'video_thn.png'` ; do cp $i `echo $i | sed -e 's/.*webinars\///' -e 's/\/.*/.png/'`; done
 #+BEGIN_CENTER
 \null\vspace{-1.5em}Many different tools/approaches developed in
