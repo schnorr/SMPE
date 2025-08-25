@@ -16,7 +16,8 @@ crop:
 smartcrop:
 	for i in `git status | grep babel | sed 's/.*pdf_babel/pdf_babel/'`; do pdfcrop $$i $$i ; done
 
-PDFLATEX=pdflatex -shell-escape
+PDFLATEX=lualatex
+#-shell-escape
 
 include LaTeX.mk
 
