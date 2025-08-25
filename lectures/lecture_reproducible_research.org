@@ -4,7 +4,7 @@
 #+STARTUP: beamer overview indent
 #+TAGS: noexport(n)
 #+LaTeX_CLASS: beamer
-#+LaTeX_CLASS_OPTIONS: [11pt,xcolor=dvipsnames,presentation]
+#+LaTeX_CLASS_OPTIONS: [10pt,xcolor=dvipsnames,presentation]
 #+OPTIONS:   H:3 num:t toc:nil \n:nil @:t ::t |:t ^:nil -:t f:t *:t <:t
 #+LATEX_HEADER: \input{org-babel-style-preembule.tex}
 #+LATEX_HEADER: %\let\tmptableofcontents=\tableofcontents
@@ -20,7 +20,7 @@
 #+LATEX_HEADER:   \let\set@color\beamerorig@set@color
 #+LATEX_HEADER:   \let\reset@color\beamerorig@reset@color}
 #+LATEX_HEADER: \makeatother
-
+#+LATEX_HEADER:         \definecolor{Moccasin}{rgb}{1,0.894,0.71} % Example RGB values for Moccasin
 
 #+LaTeX: \input{org-babel-document-preembule.tex}
 #+LaTeX: %\let\tableofcontents=\tmptableofcontents
