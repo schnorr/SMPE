@@ -4,7 +4,7 @@
 #+STARTUP: beamer overview indent
 #+TAGS: noexport(n)
 #+LaTeX_CLASS: beamer
-#+LaTeX_CLASS_OPTIONS: [10pt,xcolor=dvipsnames,presentation]
+#+LaTeX_CLASS_OPTIONS: [9pt,xcolor=dvipsnames,presentation]
 #+OPTIONS:   H:3 num:t toc:nil \n:nil @:t ::t |:t ^:nil -:t f:t *:t <:t
 #+LATEX_HEADER: \input{org-babel-style-preembule.tex}
 #+LATEX_HEADER: %\let\tmptableofcontents=\tableofcontents
@@ -94,7 +94,7 @@ For 3 years, austerity was not presented as an option but as a necessity.
 \medskip
 
 Yet, a scientific debate has at least been possible.
-*** FRMI
+*** FRMI                                                         :noexport:
 #+LaTeX: \centering{\includegraphics[width=.5\linewidth]{images/FRMI.jpg}}
 
 - 2010: [[https://www.researchgate.net/publication/255651552_Neural_correlates_of_interspecies_perspective_taking_in_the_post-mortem_Atlantic_Salmon_an_argument_for_multiple_comparisons_correction][Bennett et al. and the dead salmon]] $\smiley$
@@ -106,7 +106,7 @@ Yet, a scientific debate has at least been possible.
 
 These article do not necessarily invalidate everything but force the
 community to improve their practice.
-*** Geoffray Chang's incorrect protein structures
+*** Geoffray Chang's incorrect protein structures                :noexport:
 #+BEGIN_EXPORT latex
   \begin{columns}
     \begin{column}{.37\linewidth}
@@ -137,7 +137,7 @@ cholera (Mol. Biology, 2003), Salmonella typhimurium (Science, 2005)
 \textbf{5 retractations} that motivate improved software engineering
 practices in computational biology
 
-*** A Reproducibility Crisis? What are the Consequences ?
+*** A Reproducibility Crisis? What are the Consequences ?        :noexport:
 # #+LaTeX: \begin{overlayarea}{\linewidth}{7.6cm}\null\vspace{-.4cm}
 *[[http://www.nytimes.com/2011/07/08/health/research/08genes.html][The Duke University scandal with scientific misconduct on lung
 cancer]]*
@@ -165,7 +165,7 @@ cancer]]*
 # - Some people die and may be getting worthless information that is
 #   based on *bad science*
 # #+LaTeX: \end{overlayarea} \begin{flushright}\scriptsize Courtesy of Adam J. Richards\end{flushright}
-*** Well... Stronger and Stronger Consequences
+*** Well... Stronger and Stronger Consequences                   :noexport:
 - A recent scandal ::
   In 2013, [[https://en.wikipedia.org/wiki/Dong-Pyou_Han][/Dong-Pyou Han/]], a former assistant professor of biomedical
      sciences at Iowa State University was disgraced:\footnotesize
@@ -194,7 +194,7 @@ cancer]]*
      # On a totally different aspect, do not forget to also have a look at
      # the [[https://en.wikipedia.org/wiki/Plagiarism][/plagiarism/]] and [[https://en.wikipedia.org/wiki/Paper_generator][/paper generation/]] entries at [[https://hal.inria.fr/file/index/docid/713564/filename/TechReportV2.pdf][/having fun
      # with h-index/]]
-*** Is Fraud a new phenomenon?
+*** Is Fraud a new phenomenon?                                   :noexport:
 #+BEGIN_CENTER
    [[http://www.cnrs.fr/fr/pdf/cim/CIM36.pdf][/The Battle against Scientific Fraud/ in the CNRS International
    Magazine]]
@@ -884,7 +884,7 @@ This may be an interesting contribution but:
   \end{columns}
 #+END_EXPORT
 
-*** The Dog Ate my Homework !!!
+*** The Dog Ate my Homework !!!                                  :noexport:
 #+BEGIN_EXPORT latex
   \vspace{-.4cm}
   \begin{multicols}{2}
