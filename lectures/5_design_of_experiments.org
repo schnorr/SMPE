@@ -126,10 +126,16 @@ completely different when you are:
   server saturation
 - \dots
 
+#+latex: \vfill\pause
+
 #+BEGIN_CENTER
-This step will help you to determine *which kind of experiment design* you should
-use.
+This step will help you to determine
+
+*which kind of experiment design*
+
+you should use.
 #+END_CENTER
+
 *** Define the set of relevant \emph{response}
 #+LaTeX: \begin{columns}\begin{column}{.55\linewidth}
 The system under study is generally modeled through a *black-box* model:\vspace{-.2em}
