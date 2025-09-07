@@ -88,6 +88,28 @@ The problem we want to avoid
 - Inflates degrees of freedom → artificially small p-values
 - Increases risk of false positives
   
+*** Experimental vs. observational data
+
+Experimental data \to Actively manipulates one or more factors
+(independent variables) and controls the conditions to establish
+causal relationships (cause → effect)
+
+#+latex: \vfill
+
+Observational data \to Observes what happens naturally, with no control
+or random assignment, to identify associations/correlations, but not
+definitive causality.
+
+#+latex: \pause\vfill
+
+#+latex: {\normalsize
+| Aspect               | Experimental Data   | Observational Data |
+|----------------------+---------------------+--------------------|
+| Researcher role      | Actively intervenes | Passive observer   |
+| Randomization        | Possible            | Not possible       |
+| Control of variables | High                | Low                |
+| Causality            | Stronger evidence   | Weaker             |
+#+latex: }
 
 *** Select the problem to study
 Clearly define the kind of *system* to study, the kind of *phenomenon* to
