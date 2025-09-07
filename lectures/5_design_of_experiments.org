@@ -67,6 +67,27 @@ Other important concepts:
 #+LaTeX: \end{column}\begin{column}{.62\linewidth}
 - *Experimental* vs. *observational* data
 #+LaTeX: \end{column}\end{columns}
+*** Pseudo-replication
+
+#+begin_center
+Treating non-independent measurements as if
+
+they were independent replicates
+#+end_center
+
+#+latex: \pause
+
+Example
+- One experiment affects the next
+  - Temperature increase along the experiment
+
+#+latex: \pause\vfill
+
+The problem we want to avoid
+- Violates independence assumptions of standard tests (t-test, ANOVA)
+- Inflates degrees of freedom → artificially small p-values
+- Increases risk of false positives
+  
 
 *** Select the problem to study
 Clearly define the kind of *system* to study, the kind of *phenomenon* to
