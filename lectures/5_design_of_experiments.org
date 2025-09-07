@@ -180,7 +180,7 @@ Uncontrollable variables could be:\vspace{-.3em}\bgroup\small
 \egroup
 
 You should *carefully record* all the factors you can think of
-*** Typical case studies
+*** Typical case studies                                         :noexport:
 The typical case studies defined in the first step could include:
 - Determining which variables are most influential on the response $y$
   (*factorial designs*, *screening designs*, *analysis of variance*)
