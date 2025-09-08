@@ -528,7 +528,7 @@ underlying hypothesis
   efficient than OFAT experiments
 - *Replicate thoroughly* and *randomize properly*: you will not go far
   wrong
-* Model Investigation
+* Model Investigation                                              :noexport:
 ** Designs
 # http://www.cs.ubc.ca/~hoos/Courses/Trento-06/module-6.2-slides.pdf
 *** Without any information about the response
@@ -1030,7 +1030,7 @@ file:pdf_babel/loess_FGCS.pdf
 - "/optimality region is flat and one should rather overestimate
   the checkpointing period/" $\smiley$
 
-* Model Estimation
+* Model Estimation                                                 :noexport:
 ** Optimal Designs
 *** Remember what linear regression is about
 #+BEGIN_CENTER
@@ -1109,7 +1109,7 @@ plot(d7.Dopt , select = c( "A","B","C" ), , "D-optimized design")
   $k$ experiments among $n$ "given" configurations
   - A greedy heuristic with restart
   - Quality can be difficult to evaluate for large design spaces
-* Conclusion
+* Conclusion                                                       :noexport:
 ** 
 *** Conclusion
 - Designing experiments can be fun! \winkey
