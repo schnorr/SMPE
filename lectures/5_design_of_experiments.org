@@ -360,7 +360,7 @@ NOTE: columns run.no and run.no.std.rp are annotation,
 \end{flushright}
 
 #+END_EXPORT
-*** Saving a lot of time/money: Plackett-Burman screening designs
+*** Saving a lot of energy: Plackett-Burman screening designs
 \scriptsize
 #+begin_src R :results output :session :exports both
 d3 <-  pb(nruns= 20 ,n12.taguchi= FALSE ,nfactors= 20 -1, ncenter= 0 , 
