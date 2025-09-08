@@ -285,7 +285,7 @@ Time*
 *** Generating a $2^p$ Design
 \small
 #+begin_src R :results output :session :exports both
-library(FrF2)
+suppressMessages(library(FrF2))
 d1 = FrF2(nruns=8 ,nfactors=3 , blocks=1 , replications = 2,  
         randomize= TRUE, seed= 26052 , 
         factor.names=list(A=c(-1,1), B=c(-1,1), C=c(-1,1))); d1 ;
