@@ -1,0 +1,1142 @@
+#+AUTHOR:      Arnaud Legrand
+#+TITLE:       Design of Experiments (Part 2)
+#+DATE:        MOSIG Lecture
+#+LaTeX_CLASS: beamer
+#+LaTeX_CLASS_OPTIONS: [11pt,xcolor=dvipsnames,presentation]
+#+OPTIONS:   H:3 num:t toc:nil \n:nil @:t ::t |:t ^:t -:t f:t *:t <:t
+#+STARTUP: beamer overview indent
+#+TAGS: noexport(n)
+#+LaTeX_CLASS: beamer
+#+LaTeX_CLASS_OPTIONS: [11pt,xcolor=dvipsnames,presentation]
+#+OPTIONS:   H:3 num:t toc:nil \n:nil @:t ::t |:t ^:nil -:t f:t *:t <:t
+#+LATEX_HEADER: \input{org-babel-style-preembule.tex}
+
+#+LaTeX: \input{org-babel-document-preembule.tex}
+
+* List                                                             :noexport:
+** TODO Explicit the general invalidation workflow (Main Steps): 
+May want to reuse the pictures of
+130307_simutools13/130307-keynote-simutools.pdf from Pedro Velho's PhD
+thesis.
+** TODO Deeper explanation on pairwise t-test
+** TODO work out a two-way anova example to the end along with ME estimates
+* Documents                                                        :noexport:
+** [[file:~/Bureau/Stat/Faraway-PRA.pdf][ANOVA]]
+http://www.stat.sc.edu/~hendrixl/stat205/Lecture%20Notes/ANOVA.pdf‎
+
+http://www.gs.washington.edu/academics/courses/akey/56008/lecture/lecture9.pdf‎
+
+http://www2.mccombs.utexas.edu/faculty/carlos.carvalho/ Section1.pdf
+
+#     p. 22 and Chapt 6 of [[file:~/Bureau/Stat/Faraway-PRA.pdf][ANOVA]].
+#     http://www2.mccombs.utexas.edu/faculty/carlos.carvalho/teaching/lecture2_Dallas.pdf
+** ANOVA + pairwise t-test (for lecture 5)
+http://rtutorialseries.blogspot.co.at/2011/01/r-tutorial-series-two-way-anova-with.html
+http://rtutorialseries.blogspot.co.at/2011/02/r-tutorial-series-two-way-anova-with.html
+
+* Design of Experiments                                            :noexport:
+*** Key concepts
+There are two key concepts:
+#+BEGIN_CENTER
+  *replication* and *randomization*
+#+END_CENTER
+You replicate to *increase reliability*. You randomize to *reduce bias*.
+#+BEGIN_CENTER
+  \textbf{If you replicate thoroughly and randomize properly, \\ you will not go far wrong.}
+#+END_CENTER
+\pause
+#+BEGIN_QUOTE
+  \it\small
+  It doesn't matter if you cannot do your own advanced statistical
+  analysis. If you designed your experiments properly, you may be able
+  to find somebody to help you with the statistics.\smallskip
+
+  If your experiments are not properly designed, then no matter how
+  good you are at statistics, your experimental efforts will have been
+  in vain.
+#+END_QUOTE
+\vspace{-1em}
+#+BEGIN_CENTER
+  \textbf{Not even the most sophisticated statistical analysis can turn a flawed experiment into a good one.}
+#+END_CENTER
+
+Other important concepts:
+#+LaTeX: \vspace{-.5em}\begin{columns}\begin{column}{.35\linewidth}
+# - *Parsimony*
+- *Pseudo-replication*
+#+LaTeX: \end{column}\begin{column}{.62\linewidth}
+- *Experimental* vs. *observational* data
+#+LaTeX: \end{column}\end{columns}
+*** Pseudo-replication
+
+#+begin_center
+Treating non-independent measurements as if
+
+they were independent replicates
+#+end_center
+
+#+latex: \pause
+
+Example
+- One experiment affects the next
+  - Temperature increase along the experiment
+
+#+latex: \pause\vfill
+
+The problem we want to avoid
+- Violates independence assumptions of standard tests (t-test, ANOVA)
+- Inflates degrees of freedom → artificially small p-values
+- Increases risk of false positives
+  
+*** Experimental vs. observational data
+
+Experimental data \to Actively manipulates one or more factors
+(independent variables) and controls the conditions to establish
+causal relationships (cause → effect)
+
+#+latex: \vfill
+
+Observational data \to Observes what happens naturally, with no control
+or random assignment, to identify associations/correlations, but not
+definitive causality.
+
+#+latex: \pause\vfill
+
+#+latex: {\normalsize
+| Aspect               | Experimental Data   | Observational Data |
+|----------------------+---------------------+--------------------|
+| Researcher role      | Actively intervenes | Passive observer   |
+| Randomization        | Possible            | Not possible       |
+| Control of variables | High                | Low                |
+| Causality            | Stronger evidence   | Weaker             |
+#+latex: }
+
+*** Select the problem to study
+Clearly define the kind of *system* to study, the kind of *phenomenon* to
+observe (state, evolution of state through time), the kind of *study* to
+conduct (descriptive, exploratory, prediction, hypothesis testing,
+\dots)\medskip
+
+This is quite important as the set of experiments to perform will be
+completely different when you are:
+- studying the stabilization of a peer-to-peer algorithm under a
+  high churn
+- trying to compare various scheduling algorithms or code versions
+- modeling the response time of a server under a workload close to the
+  server saturation
+- \dots
+
+#+latex: \vfill\pause
+
+#+BEGIN_CENTER
+This step will help you to determine
+
+*which kind of experiment design*
+
+you should use.
+#+END_CENTER
+
+*** Define the set of relevant \emph{response}
+#+LaTeX: \begin{columns}\begin{column}{.55\linewidth}
+The system under study is generally modeled through a *black-box* model:\vspace{-.2em}
+- some *output* variable/\alert{response}($y$)
+- some inputs are fully unknown
+- some *input variables* ($x_1$,\dots,$x_p$) are *controllable*
+- whereas some others ($z_1$, \dots, $z_q$) are *uncontrollable*
+
+#+LaTeX: \end{column}\begin{column}{.45\linewidth}
+      \includegraphics[width=\linewidth]{fig/wp4_black_box.fig}
+#+LaTeX: \end{column}\end{columns}\medskip
+
+In our case, the response could be:\vspace{-.2em}\bgroup\small
+- the makespan of a scheduling algorithm\vspace{-.2em}
+- the amount of messages exchanged in a peer-to-peer system\vspace{-.2em}
+- the convergence time of distributed algorithm\vspace{-.2em}
+- the average length of a random walk\vspace{-.2em}
+- the amount of energy or of memory used
+\egroup
+
+Some of these metrics are the result of complex aggregation of
+measurements so they should be *carefully recorded* to check their
+correctness
+*** Determine the set of relevant \emph{factors} or \emph{variables}
+#+LaTeX: \begin{columns}\begin{column}{.55\linewidth}
+The system under study is generally modeled though a *black-box* model:\vspace{-.2em}
+- some *output* variable/\alert{response}($y$)
+- some inputs are fully unknown
+- some *input variables* ($x_1$,\dots,$x_p$) are *controllable*
+- whereas some others ($z_1$, \dots, $z_q$) are *uncontrollable*
+
+#+LaTeX: \end{column}\begin{column}{.45\linewidth}
+      \includegraphics[width=\linewidth]{fig/wp4_black_box.fig}
+#+LaTeX: \end{column}\end{columns}\medskip
+
+Typical controllable variables could be:\vspace{-.3em}\bgroup\small
+- the heuristic used (\eg FIFO, HEFT, \dots)\vspace{-.4em}
+- one of their parameters (\eg replication factor, a threshold, \dots)\vspace{-.4em}
+- the size of the platform\vspace{-.4em}
+- the degree of heterogeneity\vspace{-.4em}
+- the version of the compiler\vspace{-.3em}
+\egroup
+
+Uncontrollable variables could be:\vspace{-.3em}\bgroup\small
+- temperature, humidity, moon phase, road surface conditions\vspace{-.4em}
+- someone using the machine and interfering with the
+  experiment\vspace{-.4em}
+\egroup
+
+You should *carefully record* all the factors you can think of
+*** Typical case studies                                         :noexport:
+The typical case studies defined in the first step could include:
+- Determining which variables are most influential on the response $y$
+  (*factorial designs*, *screening designs*, *analysis of variance*)
+  - Allows to distinguish between *primary factors* whose influence
+    on the response should be modeled and *secondary factors* whose
+    impact should be averaged
+  - Allows to determine whether some factors *interact* in the response
+- Devise an *analytical model* of the response $y$ as a function of
+  the primary factors $x$ (*regression*, *lhs designs*)
+- Fit a an *analytical model* (*regression*, *response surface methodology*,
+  *optimal designs*)
+  - Can then be used to determine where to set the primary factors $x$
+    so that response $y$ is always close to a desired value or is
+    minimized/maximized
+- Determining where to set the primary factors $x$ so that variability
+  in response $y$ is small \ie so that the effect of uncontrollable
+  variables $z_1,\dots,z_q$ is minimized (*robust designs*, *Taguchi
+  designs*)
+*** General Workflow
+#+ATTR_LATEX: :width \linewidth
+[[file:images/R_workflow.pdf]]
+
+* Factorial studies                                                :noexport:
+** 2-level Factorial Studies
+*** Linear Regression
+#+begin_src R :results file output graphics :file  "./pdf_babel/linear_regression3.pdf" :exports none :width 3 :height 3 :session
+library(ggplot2)
+x=runif(50,min=-20,max=60)
+a=5
+b=.5
+y=a+b*x+rnorm(50,sd=2)
+df = data.frame(x=x,y=y,type="homoscedastic")
+y=a+(b)*x + rnorm(50,sd=.15)*(x+20)
+ggplot(data=df[df$type=="homoscedastic",],aes(x=x,y=y)) + theme_bw() + geom_hline(yintercept=0) + geom_vline(xintercept=0) +
+   geom_smooth(method='lm',color="red",size=1,se=F) + 
+   geom_point(color="blue") 
+#+END_SRC
+
+#+RESULTS:
+[[file:./pdf_babel/linear_regression3.pdf]]
+
+#+LaTeX:   \begin{columns}
+#+LaTeX:     \begin{column}{.6\linewidth}
+#+LaTeX: \vspace{-1.5em}\begin{equation*}\rv{Y} = a + b X + \rv{\epsilon}\end{equation*}\vspace{-1.5em}
+    - \rv{Y} is the *response variable*
+    - $X$ is a continuous *explanatory variable*
+    - $a$ is the *intercept*
+    - $b$ is the *slope*
+    - \rv{\epsilon} is some *noise*
+#+LaTeX:     \end{column}
+#+LaTeX:     \begin{column}{.35\linewidth}
+      #+ATTR_LATEX: :width \linewidth
+      [[file:./pdf_babel/linear_regression3.pdf]]
+#+LaTeX:     \end{column}
+#+LaTeX:   \end{columns}\vspace{-1em}
+
+When there are $2$ explanatory variables:
+#+BEGIN_EXPORT latex
+\\\centerline{$\rv{Y} = a + b^{(1)}X^{(1)} + b^{(2)}X^{(2)} +
+  b^{(1,2)}X^{(1)}X^{(2)} + \rv{\epsilon} $}
+#+END_EXPORT
+\rv{\epsilon} is generally assumed to be independent of $X^{(k)}$, hence it
+needs to be *checked* once the regression is done
+
+- Although your phenomenon is not linear, the linear model helps for
+  *initial investigations* (as a first crude approximation)
+- You should always wonder whether there is a way of looking at your
+  problem where it is linear
+*** 2-level factorial designs
+1. Decide a *low* and a *high* value for
+   #+BEGIN_CENTER
+   \includegraphics[width=.9\linewidth]{fig/factor_impact.fig}
+   #+END_CENTER
+   The different values are by convention encoded with *$-1$* and *$1$*
+   but these are *not /real/ numbers*
+2. Test *every* ($2^p$) *combination* of high and low values, possibly
+   replicating for each combination. 
+
+   By varying everything, we can detect *interactions* right
+   away
+*** The downsides of the /One Factor At a Time/ approach
+#+BEGIN_CENTER
+\includegraphics[width=.45\linewidth]{images/OFAT.jpg}\vspace{-1.3em}
+#+END_CENTER
+\small
+- Only a very small fraction of the space is covered (bias)\hfill$\frowny$
+- Interaction between factors cannot be estimated \hfill$\frowny$
+- Each replication allows to improve the estimation quality of only
+  one factor, hence it requires more runs to have good estimates
+    of all factors\hfill$\frowny$
+\normalsize
+
+Unless dealing with a very simple problem, it is always better to
+*change parameters all together* than change parameters *One Factor at a
+Time*
+*** Generating a $2^p$ Design
+\small
+#+begin_src R :results output :session :exports both
+suppressMessages(library(FrF2))
+d1 = FrF2(nruns=8 ,nfactors=3 , blocks=1 , replications = 2,  
+        randomize= TRUE, seed= 26052 , 
+        factor.names=list(A=c(-1,1), B=c(-1,1), C=c(-1,1))); d1 ;
+#+end_src
+
+#+RESULTS:
+#+begin_example
+ creating full factorial with 8 runs ...
+
+   run.no run.no.std.rp  A  B  C
+1       1           2.1  1 -1 -1
+2       2           6.1  1 -1  1
+3       3           3.1 -1  1 -1
+4       4           5.1 -1 -1  1
+...
+15     15           1.2 -1 -1 -1
+16     16           4.2  1  1 -1
+class=design, type= full factorial 
+NOTE: columns run.no and run.no.std.rp are annotation, not part of the data frame
+#+end_example
+
+#+LaTeX: \normalsize \centerline{\alert{\bf How can we analyze something like this?}}
+** Fractional design and Screening
+*** What if my number of factors is large ?
+If $p=8$, and the global variability is large, we may have to do $r=5$
+replications, hence $2^p.r=256\times 5= 1280$ experiments!!!
+
+- Then, you need something intermediate between *OFAT* and a *full
+  factorial $2^p$ design*.
+- It probably does not really make sense to study the *joint effect* of
+  changing A, B, C, D, E, F, G, and H at the same time...\bigskip
+
+You should then go for a *fractional $2^{p-k}$ design* that will still
+make sure the combinations are well spread and the design is *well
+balanced*
+*** Fractional designs
+\small
+#+begin_src R :results output :session :exports both
+d2 = FrF2(nruns=8 ,nfactors=4 , blocks=1 , replications = 2,  
+        randomize= TRUE, seed= 26052 , 
+        factor.names=list(A=c(-1,1), B=c(-1,1), C=c(-1,1), D=c(-1,1))); 
+d2 ;
+#+end_src
+
+#+RESULTS:
+#+begin_example
+   run.no run.no.std.rp  A  B  C  D
+1       1           2.1  1 -1 -1  1
+2       2           6.1  1 -1  1 -1
+3       3           3.1 -1  1 -1  1
+4       4           5.1 -1 -1  1  1
+5       5           8.1  1  1  1  1
+...
+13     13           2.2  1 -1 -1  1
+14     14           5.2 -1 -1  1  1
+15     15           1.2 -1 -1 -1 -1
+16     16           4.2  1  1 -1 -1
+class=design, type= FrF2 
+NOTE: columns run.no and run.no.std.rp are annotation, 
+      not part of the data frame
+#+end_example
+
+#+BEGIN_EXPORT latex
+\begin{flushright}
+  \begin{overlayarea}{.4\linewidth}{0cm}
+    \vspace{-5.7cm}
+    \begin{block}{}
+      Not much gain here... Fractional designs have constraints
+      but allow you to control how much you loose
+    \end{block}
+  \end{overlayarea}
+\end{flushright}
+
+#+END_EXPORT
+*** Saving a lot of energy: Plackett-Burman screening designs
+\scriptsize
+#+begin_src R :results output :session :exports both
+d3 <-  pb(nruns= 20 ,n12.taguchi= FALSE ,nfactors= 20 -1, ncenter= 0 , 
+    replications= 1 ,repeat.only= FALSE ,randomize= TRUE ,seed= 26654 , 
+    factor.names=list( A=c(-1,1),B=c(-1,1),C=c(-1,1),D=c(-1,1),
+     E=c(-1,1),F=c(-1,1),G=c(-1, 1),H=c(-1,1),J=c(-1,1),K=c(-1,1),
+     L=c(-1,1),M=c(-1,1),N=c(-1,1),O=c(-1,1),P=c(-1,1) ) ) ; d3
+#+end_src
+
+#+RESULTS:
+#+begin_example
+    A  B  C  D  E  F  G  H  J  K  L  M  N  O  P e1 e2 e3 e4
+1   1  1  1 -1  1 -1  1 -1 -1 -1 -1  1  1 -1  1  1 -1 -1  1
+2  -1  1 -1 -1 -1 -1  1  1 -1  1  1 -1 -1  1  1  1  1 -1  1
+3  -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
+4   1 -1 -1  1  1  1  1 -1  1 -1  1 -1 -1 -1 -1  1  1 -1  1
+5  -1 -1  1  1 -1  1  1 -1 -1  1  1  1  1 -1  1 -1  1 -1 -1
+6  -1 -1  1  1  1  1 -1  1 -1  1 -1 -1 -1 -1  1  1 -1  1  1
+7   1  1 -1  1  1 -1 -1  1  1  1  1 -1  1 -1  1 -1 -1 -1 -1
+8  -1  1  1 -1  1  1 -1 -1  1  1  1  1 -1  1 -1  1 -1 -1 -1
+9   1 -1  1 -1 -1 -1 -1  1  1 -1  1  1 -1 -1  1  1  1  1 -1
+10  1  1 -1 -1  1  1  1  1 -1  1 -1  1 -1 -1 -1 -1  1  1 -1
+11 -1  1  1  1  1 -1  1 -1  1 -1 -1 -1 -1  1  1 -1  1  1 -1
+12  1  1  1  1 -1  1 -1  1 -1 -1 -1 -1  1  1 -1  1  1 -1 -1
+13 -1 -1 -1  1  1 -1  1  1 -1 -1  1  1  1  1 -1  1 -1  1 -1
+14  1 -1 -1 -1 -1  1  1 -1  1  1 -1 -1  1  1  1  1 -1  1 -1
+15  1 -1  1  1 -1 -1  1  1  1  1 -1  1 -1  1 -1 -1 -1 -1  1
+16  1  1 -1  1 -1  1 -1 -1 -1 -1  1  1 -1  1  1 -1 -1  1  1
+17 -1  1 -1  1 -1 -1 -1 -1  1  1 -1  1  1 -1 -1  1  1  1  1
+18 -1 -1 -1 -1  1  1 -1  1  1 -1 -1  1  1  1  1 -1  1 -1  1
+19  1 -1  1 -1  1 -1 -1 -1 -1  1  1 -1  1  1 -1 -1  1  1  1
+20 -1  1  1 -1 -1  1  1  1  1 -1  1 -1  1 -1 -1 -1 -1  1  1
+class=design, type= pb
+#+end_example
+
+#+BEGIN_EXPORT latex
+\begin{flushright}
+  \begin{overlayarea}{.25\linewidth}{0cm}
+    \vspace{-5.7cm}
+    \begin{block}{}
+#+END_EXPORT
+      \small
+      Only allows to estimate *primary factors*, *not interations*\medskip
+
+      Preliminary step for further investigation
+#+BEGIN_EXPORT latex
+    \end{block}
+  \end{overlayarea}
+\end{flushright}
+#+END_EXPORT
+** General factorial designs
+*** What about having more than two levels?
+Before even considering the generation, how would this  analyzed?
+- ANOVA still works and interpretation is OK when there are one (1-way
+  ANOVA) or two (2-way ANOVA) factors (with several levels)
+#  http://www.personality-project.org/r/r.anova.html
+- Otherwise, it is a nightmare to analyze and you should decrease
+  either the number of factors or the number of levels
+
+In term of design, you can still go for all combinations
+*** General Full Factorial Experiments
+\scriptsize
+#+begin_src R :results output :session :exports both
+d4 <- fac.design(nfactors= 2 ,replications= 3 ,repeat.only= FALSE ,
+                 blocks= 1 , randomize= TRUE ,seed= 17366 ,
+                 nlevels=c( 3,5 ), factor.names=list( 
+                 Size=c("S","M","L"),Color=c("R","G","B","M","Y"))) ; d4
+#+end_src
+
+#+RESULTS:
+#+begin_example
+ creating full factorial with 15 runs ...
+
+   run.no run.no.std.rp Size Color
+1       1           6.1    L     G
+2       2          10.1    S     M
+3       3          12.1    L     M
+4       4           2.1    M     R
+5       5          11.1    M     M
+6       6          14.1    M     Y
+7       7           4.1    S     G
+8       8           3.1    L     R
+9       9          13.1    S     Y
+10     10          15.1    L     Y
+11     11           5.1    M     G
+12     12           1.1    S     R
+13     13           8.1    M     B
+14     14           7.1    S     B
+15     15           9.1    L     B
+16     16           1.2    S     R
+17     17           8.2    M     B
+18     18          15.2    L     Y
+19     19           3.2    L     R
+20     20          11.2    M     M
+21     21           5.2    M     G
+22     22          10.2    S     M
+23     23          13.2    S     Y
+24     24           4.2    S     G
+25     25           7.2    S     B
+26     26           9.2    L     B
+27     27          14.2    M     Y
+28     28           2.2    M     R
+29     29           6.2    L     G
+30     30          12.2    L     M
+31     31          14.3    M     Y
+32     32          12.3    L     M
+33     33           5.3    M     G
+34     34          11.3    M     M
+35     35           4.3    S     G
+36     36           7.3    S     B
+37     37           9.3    L     B
+38     38           8.3    M     B
+39     39          15.3    L     Y
+40     40          13.3    S     Y
+41     41           6.3    L     G
+42     42           3.3    L     R
+43     43          10.3    S     M
+44     44           1.3    S     R
+45     45           2.3    M     R
+class=design, type= full factorial 
+NOTE: columns run.no and run.no.std.rp are annotation, not part of the data frame
+#+end_example
+*** Reducing the size of such designs
+You can still sample from it but the outcome is likely to be *not well
+balanced*\vspace{-.3em}
+- $\leadsto$ the *estimation* may *not* be that *good* and probably quite biased
+  because of this $\frowny$
+
+#+begin_src R :results output :session :exports both
+d4[sample(size=5,replace=FALSE,1:nrow(d4)),]
+#+end_src
+
+#+RESULTS:
+:    Size Color
+: 29    L     G
+: 30    L     M
+: 41    L     G
+: 3     L     M
+: 25    S     B
+
+That's why you should *try to reduce* as much as possible the number of
+*factors* and of *levels* if you can
+*** How do you expect me to ever remember all these commands ?
+#+BEGIN_EXPORT latex
+\vspace{-1em}\begin{columns}
+  \begin{column}{.55\linewidth}
+    For the R commands, there is a trick: \winkey
+    \begin{center}
+      \bf \alert{Use Rcmdr and RcmdrPlugin.DoE}\\
+      (by Ulrike Grömping)
+    \end{center}
+    Simply \texttt{library(RcmdrPlugin.DoE)}\dots
+  \end{column}
+  \begin{column}{.45\linewidth}
+    \includegraphics[width=\linewidth]{images/rcmdr_doe.png}
+  \end{column}
+\end{columns}
+#+END_EXPORT
+You should only remember the principles and try to understand the
+underlying hypothesis
+- ANOVA enables to *discriminate real effects from noise* in *factorial
+  experiments*. \bgroup\small /It relies on homoscedasticity and
+  normality (or requires large number of samples)/\egroup
+- *2-level factorial designs* are a simple way to go and are more
+  efficient than OFAT experiments
+- *Replicate thoroughly* and *randomize properly*: you will not go far
+  wrong
+* Model Investigation
+** Designs
+# http://www.cs.ubc.ca/~hoos/Courses/Trento-06/module-6.2-slides.pdf
+*** Without any information about the response
+Then we should *not favor a region over an other*
+- What about all combinations of a regular division?
+#+LaTeX: \scriptsize\begin{center}
+#+begin_src R :results file output graphics :file pdf_babel/doe_space_regular.pdf :exports both :width 4 :height 4 :session
+x <- seq(10, 100, length.out = 10)
+y <- seq(0, 1, length.out = 10)
+d5_regular <- expand.grid(A = x, B = y)
+plot(d5_regular, main="Regular division")
+#+end_src
+
+#+ATTR_LATEX: :height 5.5cm
+#+RESULTS:
+[[file:pdf_babel/doe_space_regular.pdf]]
+
+#+LaTeX: \end{center}
+*** Can we have a less biased design?
+We should *not favor any particular value*
+- What about a uniform sampling then?
+#+LaTeX: \scriptsize\begin{center}
+#+begin_src R :results file output graphics :file pdf_babel/doe_space_uniform.pdf :exports both :width 4 :height 4 :session
+set.seed(1);
+x <- runif(100,min=10,max=100); y <- runif(100, min=0,max=1)
+d5_unif <- data.frame(A = x, B = y)
+plot(d5_unif, main="Random uniform sampling")
+#+end_src
+
+#+ATTR_LATEX: :height 5.5cm
+#+RESULTS:
+[[file:pdf_babel/doe_space_uniform.pdf]]
+
+#+LaTeX: \end{center}
+*** Can we have a design covering better the whole space?
+We do *not* want to *miss any region*
+- \small Space filling designs: *Latin Hyper Square* designs and the
+  *maximin* criteria
+#+LaTeX: \scriptsize\begin{center}
+#+begin_src R :results file output graphics :file pdf_babel/doe_space_lhs.pdf :exports both :width 4 :height 4 :session
+library(DoE.wrapper)
+d5_maximin <- lhs.design( type= "maximin" , nruns= 100 ,nfactors= 2 ,
+  digits= NULL , seed= 27041 , factor.names=list( A=c(10,100),B=c(0,1) ) )
+plot(d5_maximin , select = c( "A","B" ), main="LHS design")
+#+end_src
+
+#+ATTR_LATEX: :height 5.5cm
+#+RESULTS:
+[[file:pdf_babel/doe_space_lhs.pdf]]
+
+#+LaTeX: \end{center}
+*** This still reasonably works in higher dimensions
+#+LaTeX: \scriptsize\begin{center}
+#+begin_src R :results file output graphics :file pdf_babel/doe_space_lhs_HD.pdf :exports both :width 4 :height 4 :session
+library(DoE.wrapper);   set.seed(42);
+d5_HD = lhs.design( type= "maximin" , nruns= 100 ,nfactors= 3 ,
+    seed= 42 , factor.names=list( A=c(0,1),B=c(0,1),C=c(0,1) ) )
+Response5 = 10 + 2*as.numeric(d5_HD$A) + 3*as.numeric(d5_HD$B)*as.numeric(d5_HD$C) + 
+    rnorm(nrow(d5_HD),sd=1)
+d5_HD <- add.response(d5_HD, Response5, replace=TRUE)
+plot(d5_HD , select = c( "A","B","C" ), main="LHS design")
+#+end_src
+
+#+ATTR_LATEX: :height 5.5cm
+#+RESULTS:
+[[file:pdf_babel/doe_space_lhs_HD.pdf]]
+
+
+#+LaTeX: \end{center}
+
+*** What about the analysis?
+\scriptsize
+#+begin_src R :results output :session :exports both
+summary(lm(Response5 ~ (A + B + C)^2, data = d5_HD))
+#+end_src
+
+#+RESULTS:
+#+begin_example
+
+Call:
+lm.default(formula = Response5 ~ (A + B + C)^2, data = d5_HD)
+
+Residuals:
+     Min       1Q   Median       3Q      Max 
+-2.90043 -0.64768  0.00095  0.75471  2.61620 
+
+Coefficients:
+            Estimate Std. Error t value Pr(>|t|)    
+(Intercept)  10.0932     0.5920  17.049   <2e-16 ***
+A             1.5542     0.9686   1.605   0.1120    
+B             1.1188     0.8904   1.257   0.2121    
+C            -1.4085     0.9283  -1.517   0.1326    
+A:B          -2.3379     1.3228  -1.767   0.0804 .  
+A:C           3.0344     1.2428   2.442   0.0165 *  
+B:C           2.9668     1.2910   2.298   0.0238 *  
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+Residual standard error: 1.087 on 93 degrees of freedom
+Multiple R-squared:  0.451,	Adjusted R-squared:  0.4156 
+F-statistic: 12.74 on 6 and 93 DF,  p-value: 1.909e-10
+#+end_example
+
+
+#+BEGIN_EXPORT latex
+\begin{flushright}
+  \begin{overlayarea}{.3\linewidth}{0cm}
+    \vspace{-7.7cm}
+    \begin{block}{}
+#+END_EXPORT
+      \small There is actually too much variability to conclude
+      anything here (look at the $R^2$)\smallskip
+
+      We know from the anova that B:C is significant but its
+      Std. Error is still 1.29\smallskip
+
+      We should add another round of 3 times more experiments to halve
+      it
+#+BEGIN_EXPORT latex
+    \end{block}
+  \end{overlayarea}
+\end{flushright}
+#+END_EXPORT
+
+*** What happens if we fit a simpler model ?
+\scriptsize
+#+begin_src R :results output :session :exports both
+summary(lm(Response5 ~ A + B:C, data = d5_HD))
+#+end_src
+
+#+RESULTS:
+#+begin_example
+
+Call:
+lm.default(formula = Response5 ~ A + B:C, data = d5_HD)
+
+Residuals:
+     Min       1Q   Median       3Q      Max 
+-3.00860 -0.71419 -0.00565  0.74843  2.98579 
+
+Coefficients:
+            Estimate Std. Error t value Pr(>|t|)    
+(Intercept)  10.0054     0.2471  40.489  < 2e-16 ***
+A             1.8262     0.3920   4.659 1.01e-05 ***
+B:C           3.0066     0.5247   5.730 1.13e-07 ***
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+Residual standard error: 1.119 on 97 degrees of freedom
+Multiple R-squared:  0.3938,	Adjusted R-squared:  0.3814 
+F-statistic: 31.51 on 2 and 97 DF,  p-value: 2.852e-11
+#+end_example
+
+#+BEGIN_EXPORT latex
+\begin{flushright}
+  \begin{overlayarea}{.3\linewidth}{0cm}
+    \vspace{-5.7cm}
+    \begin{block}{}
+#+END_EXPORT
+      \small The Std. Errors decreased but remain quite high\medskip
+
+      As one could expect, the $R^2$ has decreased\dots $\frowny$
+#+BEGIN_EXPORT latex
+    \end{block}
+  \end{overlayarea}
+\end{flushright}
+#+END_EXPORT
+
+*** Let's cheat... \textcolor{black}{\winkey}
+\scriptsize
+#+begin_src R :results output :session :exports none
+set.seed(42)
+#+end_src
+
+#+RESULTS:
+
+#+begin_src R :results output :session :exports both
+Response5 = 10 + 2*as.numeric(d5_HD$A) +  3*as.numeric(d5_HD$B)*as.numeric(d5_HD$C) + 
+    rnorm(nrow(d5_HD),sd=.2) # Decreasing variability
+d5_HD <- add.response(d5_HD, Response5, replace=TRUE)
+summary(lm(Response5 ~ (A + B + C)^2, data = d5_HD))
+#+end_src
+
+#+RESULTS:
+#+begin_example
+Call:
+lm.default(formula = Response5 ~ (A + B + C)^2, data = d5_HD)
+Residuals:
+     Min       1Q   Median       3Q      Max 
+-0.50030 -0.10491 -0.00945  0.13446  0.47068 
+Coefficients:
+            Estimate Std. Error t value Pr(>|t|)    
+(Intercept) 10.06454    0.10992  91.558  < 2e-16 ***
+A            1.58630    0.17986   8.820 6.41e-14 ***
+B            0.13805    0.16533   0.835   0.4059    
+C            0.09524    0.17236   0.553   0.5819    
+A:B          0.46421    0.24562   1.890   0.0619 .  
+A:C          0.30745    0.23078   1.332   0.1860    
+B:C          2.33722    0.23972   9.750 6.92e-16 ***
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+Residual standard error: 0.2019 on 93 degrees of freedom
+Multiple R-squared:  0.9551,	Adjusted R-squared:  0.9522 
+F-statistic: 329.9 on 6 and 93 DF,  p-value: < 2.2e-16
+#+end_example
+
+#+BEGIN_EXPORT latex
+\begin{flushright}
+  \begin{overlayarea}{.3\linewidth}{0cm}
+    \vspace{-7cm}
+    \begin{block}{}
+#+END_EXPORT
+      \small One should actually instead fit the simple model
+      suggested by the previous analysis:
+      #+BEGIN_CENTER
+        =y~A+B:C=      
+      #+END_CENTER
+      You should use *parsimony* both in experiment design and modeling
+#+BEGIN_EXPORT latex
+    \end{block}
+  \end{overlayarea}
+\end{flushright}
+#+END_EXPORT
+ 
+*** Parsimony (1/2)
+\scriptsize
+#+begin_src R :results output :session :exports both
+summary(lm(Response5 ~ A + B:C, data = d5_HD))
+#+end_src
+
+#+RESULTS:
+#+begin_example
+
+Call:
+lm.default(formula = Response5 ~ A + B:C, data = d5_HD)
+
+Residuals:
+     Min       1Q   Median       3Q      Max 
+-0.56483 -0.11393  0.00626  0.12994  0.46614 
+
+Coefficients:
+            Estimate Std. Error t value Pr(>|t|)    
+(Intercept) 10.05536    0.04609  218.18   <2e-16 ***
+A            1.94985    0.07311   26.67   <2e-16 ***
+B:C          2.90476    0.09786   29.68   <2e-16 ***
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+Residual standard error: 0.2087 on 97 degrees of freedom
+Multiple R-squared:   0.95,	Adjusted R-squared:  0.949 
+F-statistic: 921.8 on 2 and 97 DF,  p-value: < 2.2e-16
+#+end_example
+
+*** Parsimony (2/2)
+The principle of *parsimony* is attributed to the 14th century English
+philosopher *William of Occam*:
+
+  #+BEGIN_QUOTE
+    ``Given a set of equally good explanations for a given phenomenon,
+    the correct explanation is the simplest explanation''  
+  #+END_QUOTE
+  \vspace{-.5em}
+
+  \pause
+  - Models should have *as few parameters as possible*
+  - Linear models should be preferred to non-linear models
+  - Models should be *pared down* until they are /minimal adequate/
+
+  \pause
+  This means, a variable should be retained in the model only if it
+  causes a significant increase in deviance when removed from the
+  current model
+  #+BEGIN_QUOTE
+    A model should be as simple as possible. But no simpler.\vspace{-.3em}
+    \begin{flushright}
+      -- A. Einstein
+    \end{flushright}
+  #+END_QUOTE 
+** Exploiting and Reducing Variance
+*** Working out a toy example
+\scriptsize
+#+begin_src R :results output :session :exports both
+x=lhs.design(type= "maximin", nruns=50, nfactors=1, seed=77, 
+             factor.names=list(x=c(0,60)))$x
+y=3+x^2/60 + x*rnorm(length(x),sd=.3)
+df = data.frame(x=x,y=y)
+reg_quad <- lm(data=df,y~x+I(x^2))
+summary(reg_quad)
+#+end_src
+
+#+RESULTS:
+#+begin_example
+
+Call:
+lm.default(formula = y ~ x + I(x^2), data = df)
+
+Residuals:
+     Min       1Q   Median       3Q      Max 
+-21.7802  -4.5247   0.7544   5.1195  20.0284 
+
+Coefficients:
+            Estimate Std. Error t value Pr(>|t|)  
+(Intercept) 2.124017   4.007473   0.530   0.5986  
+x           0.143694   0.310362   0.463   0.6455  
+I(x^2)      0.013169   0.005021   2.623   0.0117 *
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+Residual standard error: 9.483 on 47 degrees of freedom
+Multiple R-squared:  0.7647,	Adjusted R-squared:  0.7547 
+F-statistic: 76.36 on 2 and 47 DF,  p-value: 1.715e-15
+#+end_example
+
+*** We can clearly see where the heteroscedasticity comes from
+#+LaTeX: \scriptsize\begin{center}
+#+begin_src R :results file output graphics :file pdf_babel/var_red_unif.pdf :exports both :width 6 :height 4 :session
+xv <- seq(0,60,.5)
+yv <- predict(reg_quad,list(x=xv,x2=xv^2))
+ggplot(data=df, aes(x=x,y=y)) + theme_bw() +
+    geom_hline(yintercept=0) + geom_vline(xintercept=0) +
+    geom_point(aes(x=x,y=y)) +
+    geom_line(data=data.frame(x=xv,y=yv),aes(x=x,y=y),color="red")
+#+end_src
+
+#+ATTR_LATEX: :height 5.5cm
+#+RESULTS:
+[[file:pdf_babel/var_red_unif.pdf]]
+
+#+LaTeX: \end{center}
+
+*** Adding more points where there is more variability
+\scriptsize
+#+begin_src R :results output :session :exports both
+x=sqrt(lhs.design( type= "maximin" , nruns= 50 ,nfactors= 1 ,
+       seed= 77 , factor.names=list( x=c(0,60^2) ) )$x)
+y=3+x^2/60 + x*rnorm(length(x),sd=.3)
+
+df = data.frame(x=x,y=y)
+reg_quad <- lm(data=df,y~x+I(x^2))
+summary(reg_quad)
+#+end_src
+
+#+RESULTS:
+#+begin_example
+
+Call:
+lm.default(formula = y ~ x + I(x^2), data = df)
+
+Residuals:
+    Min      1Q  Median      3Q     Max 
+-27.256  -7.269   1.143   7.702  26.904 
+
+Coefficients:
+             Estimate Std. Error t value Pr(>|t|)
+(Intercept)  0.292996  10.607678   0.028    0.978
+x            0.257212   0.626398   0.411    0.683
+I(x^2)       0.012031   0.008495   1.416    0.163
+
+Residual standard error: 12.02 on 47 degrees of freedom
+Multiple R-squared:  0.6569,	Adjusted R-squared:  0.6423 
+F-statistic: 44.99 on 2 and 47 DF,  p-value: 1.209e-11
+#+end_example
+
+
+#+BEGIN_EXPORT latex
+\begin{flushright}
+  \begin{overlayarea}{.3\linewidth}{0cm}
+    \vspace{-8.3cm}
+    \begin{block}{}
+#+END_EXPORT
+
+#+begin_src R :results file output graphics :file pdf_babel/var_red_hist.pdf :exports results :width 3 :height 4 :session
+hist(x)
+#+end_src
+
+#+ATTR_LATEX: :width \linewidth
+#+RESULTS:
+[[file:pdf_babel/var_red_hist.pdf]]
+
+#+BEGIN_EXPORT latex
+    \end{block}
+  \end{overlayarea}
+\end{flushright}
+#+END_EXPORT
+
+*** Unfortunately, this does not really help
+#+LaTeX: \scriptsize
+#+begin_src R :results file output graphics :file pdf_babel/var_red_biased.pdf :exports both :width 4 :height 4 :session
+xv <- seq(0,60,.5)
+yv <- predict(reg_quad,list(x=xv,x2=xv^2))
+ggplot(data=df, aes(x=x,y=y)) + theme_bw() +
+    geom_hline(yintercept=0) + geom_vline(xintercept=0) +
+    geom_point(aes(x=x,y=y)) +
+    geom_line(data=data.frame(x=xv,y=yv),aes(x=x,y=y),color="red")
+#+end_src
+
+#+LaTeX: \small\begin{columns}\begin{column}{.5\linewidth}
+#+ATTR_LATEX: :width \linewidth
+#+RESULTS:
+[[file:pdf_babel/var_red_biased.pdf]]
+#+LaTeX: \end{column}\begin{column}{.5\linewidth}
+The $R^2$ will never exceed $0.66$ because our model fails fully
+explaining variance
+
+- We should thus rather *replicate* for large values of x and *average
+  the results*
+- The expected value will be the same but the variance will be reduced
+#+LaTeX: \end{column}\end{columns}
+ 
+** Discussing the Shape of the Model
+*** What if even polynomial models seem inadequate?
+\scriptsize
+#+begin_src R :results output :session :exports none
+library(DoE.wrapper)
+library(ggplot2)
+x=lhs.design( type= "maximin" , nruns= 50 ,nfactors= 1 ,
+    seed= 42 , factor.names=list( x=c(0,60) ) )$x
+y=log(x) + rnorm(50,sd=.2)
+df = data.frame(x=x,y=y)
+reg_quad <- lm(data=df,y~x+I(x^2))
+xv <- seq(0,60,.5)
+yv <- predict(reg_quad,list(x=xv,x2=xv^2))
+#+end_src
+
+#+RESULTS:
+
+#+begin_src R :results file output graphics :file pdf_babel/loess.pdf :exports code :width 4 :height 3.2 :session
+ggplot(data=df, aes(x=x,y=y)) + theme_bw() +
+    geom_hline(yintercept=0) + geom_vline(xintercept=0) +
+    geom_point(aes(x=x,y=y)) +
+    stat_smooth(method="loess",color="blue",fill="lightblue") +
+    geom_line(data=data.frame(x=xv,y=yv),aes(x=x,y=y),color="red") +
+    stat_function(fun=log) # the true function
+#+end_src
+
+#+RESULTS:
+[[file:pdf_babel/loess.pdf]]
+
+#+LaTeX: \vspace{1em}\begin{columns}\begin{column}{.6\linewidth}
+#+ATTR_LATEX: :width \linewidth
+file:pdf_babel/loess.pdf
+#+LaTeX: \end{column}\begin{column}{.4\linewidth}\normalsize
+\alert{LO}cal Regr\alert{ESS}ion: builds on linear regression to
+*locally fit a line* or a polynom \medskip
+
+This is a *very biased /estimator/* so use with care
+#+LaTeX: \end{column}\end{columns}
+
+*** FGCS data                                                    :noexport:
+#+begin_src R :results file output graphics :file pdf_babel/loess_FGCS.pdf :exports both :width 8 :height 5 :session
+  library(ggplot2)
+  library(reshape)
+  library(scales)
+
+  simu = read.table("/home/alegrand/org/data/2a/96f254-ac05-4075-a033-642ec547c95b/res_simu_and_model.txt",header=T)
+
+  simu2 = simu[!names(simu) %in% c("CM")]
+  dfsimul <- melt(simu2, id=c("wflName","nbPart","c"))
+  cvalues = c(0,unique(dfsimul$c)/60);
+  clabels = cvalues;
+  clabels[3]="";
+  clabels[4]="";
+  clabels[5]="";
+  clabels[7]="";
+
+  dfsimul$simulation = "Simulation"
+  dfsimul[dfsimul$variable=="ModelTM",]$simulation = "Model";
+  dfsimul[dfsimul$variable=="ModelTM",]$variable = "TM";
+  dfsimul$c = dfsimul$c/60
+  dfsimul$value = dfsimul$value/60
+ 
+  
+
+  ggplot(data=dfsimul[dfsimul$simulation=="Model",], 
+         aes(x=c, y=value, color=variable)) + 
+    geom_point(alpha=.1) +
+    geom_smooth() +
+    labs(title="Makespan",
+         x="Checkpointing Period (min)", y="Total Makespan (min)") +
+    geom_hline(yintercept=0) + geom_vline(xintercept=0) +
+    scale_x_continuous(breaks=cvalues,limits=c(0, NA),labels=clabels) + 
+    guides(color = "none") + scale_color_brewer(palette="Set1") +
+    scale_y_continuous(limits=c(0, 600),labels=comma) +
+    theme_bw();
+#+end_src
+
+#+RESULTS:
+[[file:pdf_babel/loess_FGCS.pdf]]
+
+*** Discuss about the shape
+#+BEGIN_CENTER
+#+ATTR_LATEX: :width .8\linewidth
+file:pdf_babel/loess_FGCS.pdf
+#+END_CENTER
+\small
+- "/the checkpointing period should be 68 minutes/": non-sense,
+  uninteresting\hfill$\frowny$
+- "/optimality region is flat and one should rather overestimate
+  the checkpointing period/" $\smiley$
+
+* Model Estimation
+** Optimal Designs
+*** Remember what linear regression is about
+#+BEGIN_CENTER
+  $\displaystyle \rv{Y} = X.b+ \rv{\epsilon}$ with
+  $\rv{\epsilon} \sim \mathcal{N}_n(0_n, \sigma^2 I_n)$
+#+END_CENTER
+
+The least squares regression is the Best Linear Unbiased Estimate
+($\E[\rv{\hat\beta}] = b$ and $\Var(\rv{\hat\beta})$ is minimal.
+
+$$\rv{\hat\beta}=(X^T.X)^{-1}.X^T.\rv{Y}$$
+
+- $X$ is the model matrix
+- $(X^T.X)$ is the covariance matrix
+
+The variance of \rv{\hat\beta} (the uncertainty) is directly linked to
+$(X^T.X)$ whose eigenvalues should thus be as large as possible.
+*** D optimality
+When estimating model coefficients, it is intuitively better not to
+spread inputs but rather to use extreme values
+- Note: this approach assumes that the model is correct
+
+This intuitive notion can be formalized for linear models (see [[http://www.cs.ubc.ca/~hoos/Courses/Trento-06/module-6.2-slides.pdf][Hoos]]):
+- Minimize generalized variance of *least squares estimates of model
+  parameters* (determinant of covariance matrix) \\
+  $\leadsto$ *D-optimal designs*
+- Minimize average variance (trace of covariance matrix)\\
+  $\leadsto$ *A-optimal designs*
+- Minimize average of predicted response over experimental
+  region\\
+  $\leadsto$ *I-optimal designs*\\
+*** D-optimal Designs with R
+\small
+#+begin_src R :results output :session :exports both
+d7 <- lhs.design(type= "maximin", nruns= 200 , nfactors= 3, 
+                 digits=NULL, seed= 20521, 
+                 factor.names=list( A=c(0,1),B=c(0,1),C=c(0,1)))
+d7.Dopt <- Dopt.design(25, data=d7, formula="~A +B:C", nRepeat= 5, 
+                       randomize= TRUE, seed=19583)
+#+end_src
+
+#+RESULTS:
+
+#+begin_src R :results file output graphics :file pdf_babel/dopt_1.pdf :exports none :width 4 :height 4 :session
+plot(d7, select = c( "A","B","C" ), "Space filling design")
+#+end_src
+
+#+RESULTS:
+[[file:pdf_babel/dopt_1.pdf]]
+
+#+begin_src R :results file output graphics :file pdf_babel/dopt_2.pdf :exports none :width 4 :height 4 :session
+plot(d7.Dopt , select = c( "A","B","C" ), , "D-optimized design")
+#+end_src
+
+#+RESULTS:
+[[file:pdf_babel/dopt_2.pdf]]
+
+#+BEGIN_EXPORT latex
+\begin{center}
+  \includegraphics<1>[height=5.5cm]{pdf_babel/dopt_1.pdf}
+  \includegraphics<2>[height=5.5cm]{pdf_babel/dopt_2.pdf}
+\end{center}
+#+END_EXPORT
+*** D-optimal designs
+- Fractional designs and screening designs are D-optimal designs (with
+  additional good properties) for 2-level factors and specific models
+  - Full or almost full models ($2^{n-k}$)
+  - Models with no interaction at all (screening)
+  - Algebraic methods exist for several very regular cases\bigskip
+- For arbitrary numbers of levels and specific models, it is possible
+  to build optimal designs using ILP (exponential)
+  - Each ILP variable correspond to a given configuration (exponential)
+  - $\leadsto$ hardly usable unless the design space is really
+    small\bigskip
+- Otherwise, use the Federov algorithm to select the "best" subset of
+  $k$ experiments among $n$ "given" configurations
+  - A greedy heuristic with restart
+  - Quality can be difficult to evaluate for large design spaces
+* Conclusion                                                       :noexport:
+** 
+*** Conclusion
+- Designing experiments can be fun! \winkey
+- Proceed carefully
+  - The analysis is not simple but skilled statisticians can help you
+  - The *crucial part* is actually the *modeling*, when you identify the
+    factors, the response, and the kind of study
+- This lecture only gives an *overview* but may already have *changed
+  your point of view* on how to conduct experiments
+- Remind the benefits of the sequential approach:
+  - Parsimony
+  - Use well-suited DoE and the corresponding analysis
+  - Add measurements where there is variability
+*** Recap on the lecture
+1. Reproducibility is essential
+   - literate programming with knitr or org-mode
+   - laboratory notebook
+2. Data manipulation and presentation
+   - R, ggplot2, plyr, ...
+3. Introduction to probabilities and statistics
+   - A probabilistic model allows you to assess the confidence of your
+     claims
+4. Linear regression
+   - The linear model is quite general
+   - This knowledge about the system allows you to improve estimates
+5. Design of Experiments
+   - Sequential approach
+   - Designs/analysis suited to every study
+
+  
