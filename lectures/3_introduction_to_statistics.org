@@ -465,7 +465,7 @@ When $n$ is large:
 *** Exploiting blocks
 - C.I.s overlap because variance is large. Some *setups* may have an
   intrinsically longer duration than others, hence a large
-  $\Var(\rv{A})$ and $\Var(\rv{B})$\vspace{-1em}
+  $\Var(\rv{A})$ and $\Var(\rv{B})$ \vspace{-1em}
   #+BEGIN_EXPORT latex
   \begin{center}
     \includegraphics<1>[scale=.7]{fig/2sample_comp_2.fig}% ,subfig=2
@@ -481,7 +481,7 @@ When $n$ is large:
   measuring $\rv{A_i}$ and $\rv{B_i}$, hence we can focus on $\rv{B-A}$.
 
   Since $\Var(\rv{B-A})$ is much smaller than $\Var(\rv{A})$ and
-  $\Var(\rv{B})$, we can conclude that $\mu_A<\mu_B$ with 95\% of
+  $\Var(\rv{B})$, we can conclude that $\mu_A<\mu_B$ with 95% of
   confidence.\pause
 - Relying on such common points is called \alert{blocking}
   and enables to *reduce variance*.
