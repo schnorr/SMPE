@@ -365,6 +365,7 @@ p + stat_function(fun = dnorm, arg = list(mean=dfnorm[1,]$mu, sd=sqrt(dfnorm[1,]
 ** Evaluating and Comparing Alternatives With Confidence Intervals
 *** CLT consequence: confidence interval
 #+begin_src R :results output graphics :file pdf_babel/CI_illustration.pdf :exports none :width 5 :height 3 :session
+library(tidyverse)
 mu = 500
 N = 30
 n = 40
