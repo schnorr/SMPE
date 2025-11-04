@@ -1,0 +1,1243 @@
+#+AUTHOR:      Arnaud Legrand
+#+TITLE:       Introduction to Probabilities and Statistics
+#+DATE:        MOSIG Lecture
+#+STARTUP: beamer overview indent
+#+TAGS: noexport(n)
+#+LaTeX_CLASS: beamer
+#+LaTeX_CLASS_OPTIONS: [11pt,xcolor=dvipsnames,presentation]
+#+PROPERTY: header-args :eval never-export
+#+OPTIONS:   H:3 num:t toc:nil \n:nil @:t ::t |:t ^:nil -:t f:t *:t <:t
+#+LATEX_HEADER: \input{org-babel-style-preembule.tex}
+#+LATEX_HEADER: \usepackage{commath}
+
+#+LaTeX: \input{org-babel-document-preembule.tex}
+
+
+#+BEGIN_EXPORT latex
+#+END_EXPORT
+* List                                                             :noexport:
+** TODO link figures to source code
+** TODO Ratio games
+- Jain example
+- +10% -10% is generally not 0%. Convert to time that you can safely
+  sum to avoid problems. This may require to "normalize" or
+  "homogeneify" durations in blocks.
+- mean of ratio \neq ratio of means. In most cases, you actually care
+  abou ratio of means.
+- Confidence intervals on a ratio of means:
+  - Naive way for Y/X = [ymin/xmax:ymax/xmin].
+  - Smarter way:
+    http://stats.stackexchange.com/questions/164738/confidence-interval-of-ratio-estimator
+* A (mathematical) probabilistic model                             :noexport:
+** 
+*** Probabilities
+\vspace{-.3em}
+- Using probabilities enables to model *uncertainty* that may result of
+  *incomplete information* or *imprecise measurements* 
+
+  \pause
+
+  A *random variable* (or stochastic variable) is, roughly speaking, a
+  variable whose value results from a measurement (or an observation)
+
+  You can think of it as a *small box*:
+  - Every time you open the box, you get a _different_ value.
+  - I will use this box analogy throughout the whole lecture and I
+    encourage you to ask yourself what the box can be in your own
+    studies\medskip
+  \pause
+- Formally a *probability space* is defined by $(\Omega, \F, \P)$ where:
+  - $\Omega$, the *sample space*, is the set of all possible *outcomes*
+    - \Eg
+      all the possible combinations of your DNA with the one of your
+      {girl|boy}friend
+    - You may or may not be able to observe directly the outcome.
+    \pause
+  - \F if the set of *events* where an event is a set containing zero or
+    more outcomes
+    - \Eg the event of "the DNA corresponds to a girl with blue eyes"
+    - An event is somehow more tangible and can generally be observed
+    \pause
+  - The *probability measure* $\P:\F \to [0,1]$ is a function returning an
+    event's probability 
+    #+LaTeX: ($\P$("having a brown-eyed baby girl") = 0.0005)
+*** Continuous random variable
+- A *random variable* associates a *numerical value* to *outcomes*
+  \begin{equation*}
+  \rv{X}: \Omega \to \R
+  \end{equation*}
+  \vspace{-1.6em}
+  - \Eg the weight of the baby at birth (assuming it solely depends
+    on DNA, which is quite false but it's for the sake of the example)
+  - Since many computer science experiments are based on time
+    measurements, we focus on *continuous* variables
+- \textbf{Note:} To distinguish random variables, which are complex
+  objects, from other mathematical objects, they will always be
+  written in blue capital letters in this set of slides (\eg \rv{X})
+
+- The probability measure on \Omega induces probabilities on the
+  *values* of \rv{X}
+  - $\P(\rv{X}=0.5213)$ is generally 0 as the outcome never exactly matches
+  - $\P(0.5213\leq\rv{X}\leq0.5214)$ may however be non-zero
+*** Probability distribution
+#+begin_src R :results output graphics :file "pdf_babel/Gamma_distribution.pdf" :exports none :width 6 :height 3 :session
+library(ggplot2)
+library(ggthemes)
+df = data.frame(x=c(-2,10), y=c(0,.3))
+func = dgamma
+pfunc = pgamma
+args = list(shape = 3)
+xmin = 1
+xmax = 6
+x = seq(from=xmin,to=xmax,length.out=50)
+y = do.call(func,c(list(x=x),args))
+area = data.frame(x=x, y=y)
+integral = diff(range(do.call(pfunc,c(list(q=c(xmin,xmax)),args))))
+label = paste("P(paste(",xmin," <= X) <= ",xmax,") == ", integral)
+
+r2.value <- 0.90
+
+
+p = ggplot(data=df,aes(x=x,y=y)) + geom_point(size=0) + theme_classic() + 
+    stat_function(fun = func, colour = "darkgreen", arg = args) +
+        geom_area(data=area,aes(x=x,y=y),fill="lightskyblue2") + 
+            geom_text(x=.7*max(df$x),y=.7*max(df$y), label=label, parse=T) +
+            ylab(expression(paste(f[X],"(",italic(w),")"))) + xlim(df$x) +
+            xlab(expression(italic(w)))
+p
+# ggsave(p,file="pdf_babel/Gamma_distribution.pdf",width=6,height=4)
+#+end_src
+
+#+RESULTS:
+[[file:pdf_babel/Gamma_distribution.pdf]]
+
+A *probability distribution* (a.k.a. *probability density function* or
+p.d.f.) is used to describe the probabilities of different *values*
+occurring
+
+- A random variable \rv{X} has density $f_X$, where $f_X$ is a
+  non-negative and integrable function, if: \qquad\quad
+  $\displaystyle \boxed{\P[a \leq \rv{X} \leq b] = \int_a^b f_X(w) \, \dif w}$
+  #+BEGIN_EXPORT latex
+%\vspace{-.5em}
+\begin{columns}
+  \begin{column}{.7\linewidth}
+    \includegraphics[width=\linewidth]{pdf_babel/Gamma_distribution.pdf}
+  \end{column}
+  \begin{column}{.3\linewidth}
+    \begin{boxedminipage}{1.1\linewidth}
+      \scriptsize Note: \texttt{the} $\text{X}$ in
+      \hbox{$1\leq\text{X}\leq6$} \textit{should be in blue...}
+    \end{boxedminipage}
+  \end{column}
+\end{columns}
+
+  #+END_EXPORT
+#  \vspace{-.5em}
+- \textbf{Note}: people often confuse the sample space with the random
+  variable. Try to make the difference when modeling your system, it
+  will help you
+*** Characterizing a random variable
+The probability density function *fully characterizes* the random
+variable but it is also complex object
+
+- It may be symmetrical or not
+- It may have one or several *modes*
+- It may have a bounded support or not, hence the random variable may
+  have a *minimal* and/or a *maximal* value
+- The *median* cuts the probabilities in half
+
+#+begin_src R :results output graphics :file "pdf_babel/distribution_characteristics.pdf" :exports none :width 6 :height 3 :session
+library(ggplot2)
+library(ggthemes)
+xmin = -2
+xmax = 10
+ymin = 0
+ymax = .3
+
+func = dgamma
+pfunc = pgamma
+args = list(shape = 3)
+
+x = seq(from=xmin,to=xmax,length.out=500)
+y = do.call(pfunc,c(list(q=x),args))
+dfminx = data.frame(x=x,y=y)
+minx = tail(dfminx[dfminx$y==0,],n=1)$x
+if(length(minx)==0) {minx=NA}
+maxx = head(dfminx[dfminx$y==1,],n=1)$x
+if(length(maxx)==0) {maxx=NA}
+medianx = tail(dfminx[dfminx$y<.5,],n=1)$x
+if(length(medianx)==0) {medianx=NA}
+
+y = do.call(func,c(list(x=x),args))
+dfminx = data.frame(x=x,y=y)
+modex = dfminx[dfminx$y==max(dfminx$y),]$x
+espx = sum(dfminx$x*dfminx$y)*diff(range(head(dfminx$x,n=2)))
+
+dfstat = data.frame(name = c("min", "median", "max","mode","expected value"),
+                    x = c(minx,medianx,maxx,modex,espx),
+                    y = ymax)
+
+p = ggplot(data=dfstat,aes(x=x,y=y,color=name)) + geom_line(alpha=1) +
+    xlim(xmin,xmax) + ylim(ymin,ymax) + theme_classic() + ylab("f(x)") +
+    stat_function(fun = func, colour = "black", arg = args) +
+    geom_vline(aes(xintercept=x,color=name)) + guides(colour = guide_legend(""))
+
+p
+# ggsave(p,file="pdf_babel/Gamma_distribution.pdf",width=6,height=4)
+#+end_src
+
+#+RESULTS:
+[[file:pdf_babel/distribution_characteristics.pdf]]
+
+#+BEGIN_CENTER
+\includegraphics[width=.7\linewidth]{pdf_babel/distribution_characteristics.pdf}
+#+END_CENTER
+\vspace{-1em}
+
+\bf These are interesting aspects of $\mathbf{f_X}$ but they barely
+summarize it
+*** Expected value and variance
+- When one speaks of the "expected price", "expected height", etc. one
+  means the *expected value* of a random variable that is a price, a
+  height, etc.
+  \begin{align*}
+  \E[\rv{X}] & = x_1p_1 + x_2p_2 + \ldots + x_kp_k = \int_{-\infty}^\infty x f_X(x)\, \dif x
+  \end{align*}
+  The expected value of \rv{X} is the ``average value'' of \rv{X}.\smallskip
+
+  It is \textbf{not} the most probable value. The mean is _one_ aspect
+  of the distribution of \rv{X}. The *median* or the *mode* are other
+  interesting aspects.
+- The *variance* is a measure of how far the values of a
+  random variable are spread out from each other.
+
+  If a random variable \rv{X} has the expected value (mean) $\mu =
+  \E[\rv{X}]$, then the variance of \rv{X} is given by:
+  #+BEGIN_EXPORT latex
+  \begin{align*} 
+      \Var(\rv{X}) &= \E\left[(\rv{X} - \mu)^2
+      \right] = \int_{-\infty}^\infty  (x-\mu)^2 f_X(x)\, \dif x
+  \end{align*}
+  #+END_EXPORT
+- The *standard deviation $\sigma$* is the square root of the variance. This
+  normalization allows to compare it with the expected value
+* Using the model to estimate the expected value
+** Estimation                                                     :noexport:
+*** How to estimate the Expected value?
+To empirically *estimate* the expected value of a random variable
+\rv{X}, one repeatedly measures observations of the variable and
+computes the arithmetic mean of the results \bigskip 
+
+This is called the *sample mean* \bigskip 
+
+Unfortunately, if you repeat the estimation, you may get a different
+value since \rv{X} is a random variable \dots
+*** Central Limit Theorem [\textbf{CLT}]
+- Let $\{\rv{X_1}, \rv{X_2}, \dots, \rv{X_n}\}$ be a random sample of size
+  $n$ (\ie a sequence of *independent* and *identically distributed*
+  random variables with expected values $\mu$ and variances $\sigma^2$)
+- The *sample mean* of these random variables is:
+  #+BEGIN_EXPORT latex
+  \begin{equation*}
+  \rv{S_n} =  \frac{1}{n} (\rv{X_1} + \dots + \rv{X_n})
+  \end{equation*}
+  #+END_EXPORT
+  $\rv{S_n}$ is a random variable too!
+- It is *unbiased*, \ie $\E[\rv{S_n}]=\E[\rv{X}]$
+- For large n's, the distribution of $\rv{S_n}$ is approximately
+  *normal* with *mean $\mu$* and *variance $\frac{\sigma^2}{n}$*
+  #+BEGIN_EXPORT latex
+  \begin{equation*}
+  \rv{S_n} \xrightarrow[n\to\infty]{} \N\left(\mu,\frac{\sigma^2}{n}\right)
+  \end{equation*}
+  #+END_EXPORT
+*** CLT Illustration: the mean smooths distributions
+#+begin_src R :results output graphics :file "pdf_babel/CLT_illustration.pdf" :exports none :width 9 :height 6 :session
+library(ggplot2)
+library(ggthemes)
+
+triangle <- function(n=10) {
+  sqrt(runif(n)) 
+}
+
+broken <- function(n=10) {
+  x=runif(n);
+  x/(1-x);
+}
+
+broken_mid <- function(n=10) {
+  x=(runif(n)+runif(n))/2;
+  x/(1-x);
+}
+
+
+generate <- function(n=50000,N=c(1,2,5,10,15,20,30,100), law=c("unif","binom","triangle")) {
+  df=data.frame();
+  for(l in law) {
+    for(p in N) {
+      X=rep.int(0,n);
+      for(i in 1:p) {
+        X = X + switch(l, unif = runif(n),
+                          binom = rbinom(n,1,.5), 
+                          exp=rexp(n,rate = 2), 
+                          norm=rnorm(n,mean = .5),
+                          triangle=triangle(n)-1/6,
+                          broken=broken(n),
+                          broken_mid=broken_mid(n));
+      }
+      X = X/p;
+      df=rbind(df,data.frame(N=p,SN=X,law=l));
+    }
+  } 
+  df;
+}
+d=generate()
+ggplot(data=d,aes(x=SN)) + geom_density(aes(y = ..density..)) + 
+     facet_grid(law~N) + theme_classic() + xlab("") + 
+     scale_x_continuous(breaks=c(0,.5,1))
+#+end_src
+
+#+RESULTS:
+[[file:pdf_babel/CLT_illustration.pdf]]
+
+  
+Start with an *arbitrary* distribution and compute the distribution of
+$S_n$ for increasing values of $n$.
+#+BEGIN_CENTER
+#+LaTeX: \includegraphics<1>[width=.8\linewidth]{pdf_babel/CLT_illustration.pdf}
+#+END_CENTER
+*** The Normal Distribution
+#+begin_src R :results output graphics :file "pdf_babel/normal_distribution.pdf" :exports none :width 6 :height 2.5 :session
+library(ggplot2)
+library(ggthemes)
+xmin = -5
+xmax = 5
+ymin = 0
+ymax = 1.5
+
+dfnorm = data.frame(mu=c(0,0,0,-2),sigma2=c(.1,1,5,.5))
+dfnorm$label = paste0("mu=",dfnorm$mu,", sigma^2=",dfnorm$sigma2)
+
+df = data.frame(x=c(xmin,xmax),y=c(ymin,ymax))
+
+p = ggplot(data=df,aes(x=x,y=y)) + 
+    xlim(xmin,xmax) + ylim(ymin,ymax) + theme_classic() +
+    guides(colour = guide_legend("")) + ylab("f(x)")
+
+## Argh, this does not work either. I have to do it "manually". :(
+# for(i in 1:dim(dfnorm)[1]) {
+#   d = dfnorm[i,]
+#   print(d$label)
+#   p = p + stat_function(fun = dnorm, 
+#                         arg = list(mean=d$mu, sd=d$sigma2), 
+#                         aes(color=dfnorm[i,]$label))
+# }
+
+p + stat_function(fun = dnorm, arg = list(mean=dfnorm[1,]$mu, sd=sqrt(dfnorm[1,]$sigma2)), aes(color=dfnorm[1,]$label)) +
+    stat_function(fun = dnorm, arg = list(mean=dfnorm[2,]$mu, sd=sqrt(dfnorm[2,]$sigma2)), aes(color=dfnorm[2,]$label)) +
+    stat_function(fun = dnorm, arg = list(mean=dfnorm[3,]$mu, sd=sqrt(dfnorm[3,]$sigma2)), aes(color=dfnorm[3,]$label)) +
+    stat_function(fun = dnorm, arg = list(mean=dfnorm[4,]$mu, sd=sqrt(dfnorm[4,]$sigma2)), aes(color=dfnorm[4,]$label))
+#+end_src
+
+#+RESULTS:
+[[file:pdf_babel/normal_distribution.pdf]]
+
+#+BEGIN_EXPORT latex
+  \begin{overlayarea}{\linewidth}{4.5cm}
+    \begin{center}%
+      \includegraphics<1>[height=4.5cm]{pdf_babel/normal_distribution.pdf}%
+      \includegraphics<2>[height=4.5cm]{images/Standard_deviation_diagram.pdf}%
+    \end{center}
+  \end{overlayarea}
+  \uncover<1->{The smaller the variance the more ``spiky'' the
+    distribution.}
+  \uncover<2->{
+#+END_EXPORT
+- Dark blue is less than one standard deviation from the mean. For the
+  normal distribution, this accounts for about 68% of the set.
+- Two standard deviations from the mean (medium and dark blue) account
+  for about 95%
+- Three standard deviations (light, medium, and dark blue) account for
+  about 99.7%
+#+LaTeX: }
+
+** Evaluating and Comparing Alternatives With Confidence Intervals :noexport:
+*** CLT consequence: confidence interval
+#+begin_src R :results output graphics :file pdf_babel/CI_illustration.pdf :exports none :width 5 :height 3 :session
+library(tidyverse)
+mu = 500
+N = 30
+n = 40
+X = 0
+for (i in 1:N) {
+    X = X + mu + runif(n, min = -1, max = 1) # Hence var=1/3
+}
+# so sigma_n = sqrt(1/3)/sqrt(N)
+ci = 2*sqrt(1/3)/sqrt(N);
+
+X = X/N
+
+# length(X[X >= 1775.5 & X <= 1776.6])/length(X)
+
+df = data.frame(x = X, y = seq(1:length(X)))
+df$valid = 1
+df[abs(df$x - mu) > ci, ]$valid = 0
+ggplot(df, aes(x = x, y = y, color = factor(valid))) + geom_point() + 
+    geom_errorbarh(aes(xmax = x - ci, xmin = x + ci)) + 
+    geom_vline(xintercept = mu) + 
+    theme_classic() + guides(colour = guide_legend("")) +
+    xlim(mu-3*ci,mu+3*ci) + 
+    ylab("Trial #") + xlab("Observation: sample mean with \nconfidence interval") +
+    coord_flip() + ggtitle(paste(n," observations of the mean of ",N," samples"))
+#+end_src
+
+#+RESULTS:
+
+#+BEGIN_EXPORT latex
+\begin{overlayarea}{\linewidth}{4.5cm}
+  \begin{center}%
+    \includegraphics<1>[height=4.5cm]{images/Standard_deviation_diagram.pdf}%
+    \includegraphics<2>[height=4.5cm]{pdf_babel/CI_illustration.pdf}%
+  \end{center}
+\end{overlayarea}
+#+END_EXPORT
+
+When $n$ is large:
+#+BEGIN_EXPORT latex
+\begin{center}
+  \scalebox{.9}{$\displaystyle
+  \P\left(\mu\in
+    \left[\rv{S_n}-2\frac{\sigma}{\sqrt{n}},\rv{S_n}+2\frac{\sigma}{\sqrt{n}}\right]\right)
+  = \P\left(\rv{S_n}\in
+    \left[\mu-2\frac{\sigma}{\sqrt{n}},\mu+2\frac{\sigma}{\sqrt{n}}\right]\right)
+  \approx  95\%$}
+\end{center}
+\uncover<2>{There is 95\% of chance that the \alert{true mean} lies
+  within 2$\frac{\sigma}{\sqrt{n}}$ of the \alert{sample mean}.}
+#+END_EXPORT
+*** Without any particular hypothesis
+- Assume, you have evaluated two *alternatives* $A$ and $B$ on $n$
+  different *setups*
+
+- You therefore consider the associated random variables \rv{A} and
+  \rv{B} and try to estimate their expected values $\mu_A$ and $\mu_B$
+#+BEGIN_EXPORT latex
+  \begin{center}
+    \begin{overlayarea}{.9\linewidth}{4.5cm}
+      \begin{center}%
+        \includegraphics<1>[scale=.911]{fig/2sample_comp_1.fig}% ,subfig=1
+        \includegraphics<2>[scale=.911]{fig/2sample_comp_2.fig}% ,subfig=2
+        \includegraphics<3->[scale=.911]{fig/2sample_comp_3.fig}% ,subfig=3
+      \end{center}
+    \end{overlayarea}
+  \end{center}
+  \vspace{-.8em}
+    \begin{overlayarea}{\linewidth}{1.5cm}%
+      \only<1>{The two 95\% confidence intervals do not overlap\vspace{-.8em}
+        \begin{flushright}
+          $\leadsto \mu_A<\mu_B$ with more than 90\% of confidence
+          $\smiley$
+        \end{flushright}
+      }%
+      \only<2>{The two 95\% confidence intervals do overlap\vspace{-.8em}
+        \begin{flushright}
+          $\leadsto$ Nothing can be concluded \frowny\\
+          Reduce C.I?
+        \end{flushright}
+      }%
+      \only<3>{The two 70\% confidence intervals do not overlap\vspace{-.8em}
+        \begin{flushright}
+          $\leadsto\mu_A<\mu_B$ with less than 50\% of confidence \frowny
+          $\leadsto$ more experiments...
+        \end{flushright}
+      }%
+      \only<4->{The width of the confidence interval is proportional
+        to $\frac{\sigma}{\sqrt{n}}$\vspace{-.8em}
+        \begin{flushright}
+          Halving C.I. requires 4 times more experiments! $\frowny$\\
+          Try to \alert{reduce variance} if you can...$\smiley$
+        \end{flushright}
+      }
+    \end{overlayarea}
+#+END_EXPORT
+*** Exploiting blocks
+- C.I.s overlap because variance is large. Some *setups* may have an
+  intrinsically longer duration than others, hence a large
+  $\Var(\rv{A})$ and $\Var(\rv{B})$ \vspace{-1em}
+  #+BEGIN_EXPORT latex
+  \begin{center}
+    \includegraphics<1>[scale=.7]{fig/2sample_comp_2.fig}% ,subfig=2
+    \includegraphics<2->[scale=.7]{fig/2sample_comp_4.fig}% ,subfig=4
+  \end{center}
+  #+END_EXPORT
+  \pause
+- The previous test estimates $\mu_A$ and $\mu_B$ *independently*.
+
+  But note that $\E[\rv{A}]<\E[\rv{B}] \Leftrightarrow \E[\rv{B-A}]>0$.
+
+  In the previous evaluation, the \alert{same} setup $i$ is used for
+  measuring $\rv{A_i}$ and $\rv{B_i}$, hence we can focus on $\rv{B-A}$.
+
+  Since $\Var(\rv{B-A})$ is much smaller than $\Var(\rv{A})$ and
+  $\Var(\rv{B})$, we can conclude that $\mu_A<\mu_B$ with 95% of
+  confidence.\pause
+- Relying on such common points is called \alert{blocking}
+  and enables to *reduce variance*.
+*** Let's reuse a previous example
+#+begin_src R :results output graphics :file pdf_babel/comparing_2_alternatives.pdf :exports none :width 5 :height 3 :session
+library(ggplot2)
+library(dplyr)
+library(tidyr)
+set.seed(42);
+n = 40;
+setup_val=rgamma(n,shape=3)
+a = setup_val + 1.5 + runif(n)
+b = setup_val + 2.5 + runif(n)
+diff = .65
+df = data.frame(A=a,B=b)
+write.csv(df,file="data/set1.csv",row.names=FALSE);
+df$Diff=df$B-df$A
+dfgg = df %>% gather(Alternative, Time)
+dfsummary = dfgg %>% group_by(Alternative) %>%
+       summarise(num = n(),
+                 mean = mean(Time),
+                 sd = sd(Time),
+                 ci70 = sd(Time)/sqrt(n()),
+                 ci95 = 2*sd(Time)/sqrt(n()),
+                 ci99 = 3*sd(Time)/sqrt(n()))
+dfsummary = dfsummary %>% gather(CI,ci,ci70,ci95,ci99) 
+
+ggplot(dfgg,aes(x=Alternative,y=Time)) + theme_bw() +
+     scale_color_brewer(palette="Set1") +
+    guides(fill = "none") + 
+    geom_jitter(alpha=.2,position = position_jitter(width = .1)) +
+    geom_errorbar(data=dfsummary,width=.3,
+                  aes(y=mean,ymin=mean-ci,ymax=mean+ci,color=CI),
+                  position="dodge") +
+    geom_point(data=dfsummary,shape=21, position="dodge", 
+               aes(y=mean,color=CI)) + 
+    geom_rect(data=dfsummary[dfsummary$Alternative=="A" &
+                             dfsummary$CI=="ci95",], 
+              aes(y=mean, xmin="A",xmax="B",
+                  ymin=mean-ci,ymax=mean+ci),fill="blue",alpha=.3) +
+    geom_hline(yintercept=diff,color="azure4") + 
+    annotate("text",x="B",y=1.7*diff,label=diff,size=4,color="azure4")
+
+#+end_src
+
+#+RESULTS:
+[[file:pdf_babel/comparing_2_alternatives.pdf]]
+
+#+BEGIN_CENTER
+\includegraphics[width=.7\linewidth]{pdf_babel/comparing_2_alternatives.pdf}
+#+END_CENTER
+
+\vspace{-.8em} $\mu_A$ is 0.65 seconds smaller than $\mu_B$ with more than
+99% of confidence
+#+LaTeX:  $\smiley$\medskip
+
+You need to invest in a probabilistic model. Here we assumed:
+#+LaTeX: \begin{columns}\begin{column}{.3\linewidth}
+- $\rv{A_i} = \boxed{\rv{S_i}} + \rv{A'_i}$
+- $\rv{B_i} = \boxed{\rv{S_i}} + \rv{B'_i}$
+#+LaTeX: \end{column}\begin{column}{.7\linewidth}~\\[-.6em]
+So we could subtract them $\smiley$ \\
+Dividing them would have been a very bad idea...$\frowny$
+#+LaTeX: \end{column}\end{columns}
+*** How to compute and plot CI in R: code
+\small
+#+begin_src R :results output graphics :file pdf_babel/comparing_2_alternatives2.pdf :exports code :width 5 :height 3 :session
+library(ggplot2)
+library(dplyr)
+library(tidyr)
+df = read.csv("data/set1.csv",header=T)
+df$Diff=df$B-df$A # Assuming observations are paired!
+dfgg = df %>% gather(Alternative, Time) 
+dfsum = dfgg %>% 
+       group_by(Alternative) %>%
+       summarise(num = n(), mean = mean(Time), sd = sd(Time),
+                 se = 2*sd/sqrt(num))
+ggplot(dfgg,aes(x=Alternative,y=Time,color=Alternative)) + 
+     scale_color_brewer(palette="Set1") + theme_bw() +
+     geom_jitter(alpha=.2,position = position_jitter(width = .1)) +
+     geom_errorbar(data=dfsum,width=.2,
+                   aes(y=mean,ymin=mean-se,ymax=mean+se)) +
+     geom_point(data=dfsum,shape=21, size=3,
+                aes(y=mean,color=Alternative))
+#+end_src
+
+#+RESULTS:
+[[file:pdf_babel/comparing_2_alternatives2.pdf]]
+*** How to compute and plot CI in R: output
+[[file:pdf_babel/comparing_2_alternatives2.pdf]]
+** What should I take care of?
+*** CLT hypothesis
+#+begin_src R :results output graphics :file pdf_babel/sample_var.pdf :exports none :width 5 :height 3 :session
+set.seed(42)
+df = data.frame(row.names = c("n", "sample_mean", "sample_var"))
+for (n in seq(2, 32)) {
+    for (N in 1:30) {
+        x = rnorm(n, 5, 1)
+        df = rbind(df, data.frame(n = c(n), sample_mean = mean(x), sample_var = var(x)))
+    }
+}
+ggplot(df, aes(x = n, y = sample_var)) + theme_classic() +
+    geom_point(alpha=.15) + ylab('Samples of "sample variance"') +
+    ggtitle("Each dot is the sample variance of n values") +
+    geom_hline(yintercept = 1,color="darkred") + 
+    annotate(geom="text",label="True variance", x = 25, y = 1.5, 
+             color="darkred")
+        
+#+end_src
+
+#+RESULTS:
+[[file:pdf_babel/sample_var.pdf]]
+
+\null\vspace{-2em}
+- The CLT hypothesis are very weak: it *does not assume any particular
+  distribution* (\eg normality) for \rv{X}
+
+  But, the CLT says that /when $n$ goes large/, the sample mean is
+  /normally distributed/. We have seen it holds true
+  quickly\vspace{-.5em}
+
+  #+BEGIN_EXPORT latex
+  \begin{overlayarea}{\linewidth}{0cm}
+    \vspace{-1em}
+    \begin{center}
+      \includegraphics<1>[width=.7\linewidth]{pdf_babel/CLT_illustration.pdf}
+    \end{center}
+  \end{overlayarea}
+  \vspace{-.4em}
+  #+END_EXPORT
+- 
+  #+BEGIN_EXPORT latex
+  \uncover<2->{%
+    However, the CLT uses $\sigma = \sqrt{\Var(X)}$ but we only have the
+    \alert{sample variance}, not the \alert{true variance}
+  }
+
+  \uncover<3>{%
+    So you should always try to either find an \alert{upper bound on the
+      true variance} or \alert{overestimate the sample variance}
+      (\eg \fbox{\texttt{se=\alert{4}*sd/sqrt(num)}})\bigskip
+  }
+
+  \begin{overlayarea}{\linewidth}{4cm}
+    \vspace{-1em}
+    \begin{center}
+      \includegraphics<2->[width=.7\linewidth]{pdf_babel/sample_var.pdf}
+    \end{center}
+  \end{overlayarea}
+#+END_EXPORT
+
+*** How many replicates?
+
+#+BEGIN_EXPORT latex
+\small
+\begin{itemize}
+\item<+-> 
+  \uncover<.->{\textbf{Q:} How Many Replicates?} \\
+  ~\hfill\uncover<+->{\textbf{A1:} How many can you afford?}\\
+  ~\hfill\uncover<+->{\textbf{A2:} 30\dots\hspace{3.25cm}~\\
+    \textbf{Rule of thumb:} a sample of 30 or more is big sample but a
+    sample of 30 or less is a small one (\uline{doesn't always work})}
+
+\item<+-> With less than 30, you should make the C.I. wider using
+  \eg the \alert{Student law}.
+
+\item<+-> Once you have a first C.I. with 30 samples, you can estimate
+  how many samples will be required to answer your question. If it is
+  too large, then either try to reduce variance (or the scope of your
+  experiments) or simply explain that the two alternatives are hardly
+  distinguishable... You need a \alert{sequential approach}.
+
+\item<+-> \textbf{Running the right number of experiments enables to
+    get to conclusions more quickly and hence to test other
+    hypothesis.}
+\end{itemize}
+#+END_EXPORT
+*** Key Hypothesis
+  The hypothesis of CLT are very weak. Yet, to qualify as replicates,
+  the repeated measurements:
+  - must be *independent* (take care of warm-up)
+  - must *not* be part of a *time series* (the system behavior may
+    temporary change)
+  - must *not* come *from the same place* (the machine may have a problem)
+  - must be of appropriate *spatial scale*
+
+    #+BEGIN_CENTER
+    \textbf{Perform graphical checks}
+    #+END_CENTER
+*** Simple Graphical Checks                                        :noexport:
+#+begin_src R :results output :session :exports both
+# From http://rpubs.com/sinhrks/plot_tsstats
+library(devtools)
+install_github('sinhrks/ggfortify')
+#+end_src
+
+#+begin_src R :results output :session :exports both
+library(gridExtra)
+library(ggplot2)
+# library(ggfortify)
+sequence_plot = function (df) {
+   df$Start=1:nrow(df);
+   ggplot(df,aes(x=Start,y=Value)) + geom_line() + 
+         theme_bw() + ggtitle("Sequence Plot");
+}
+
+lag_plot = function (df) {
+     X = df$Value
+    df_lag = data.frame(x1=X[1:length(X)-1],x2=X[2:length(X)])
+    ggplot(df_lag,aes(x=x1,y=x2)) + geom_point(alpha=.4) + 
+         theme_bw() + ggtitle("Lag Plot") + xlab("Value[i]") + 
+         ylab("Value[i+1]");;
+    # Or alternatively, if ggfortify is installed, give a try 
+    # to gglagplot...
+}
+
+four_plot = function (df) {
+    p1 = sequence_plot(df);
+    p2 = lag_plot(df);
+    p3 = ggplot(df,aes(x=Value)) + geom_histogram() +
+         theme_bw() + ggtitle("Histogram");
+    p4 = ggplot(df,aes(sample=Value)) + stat_qq() + 
+         theme_bw() + ggtitle("Normal Probability Plot");
+    grid.arrange(p1,p2,p3,p4,nrow=2);
+}
+#+end_src
+
+#+RESULTS:
+
+#+begin_src R :results output graphics :file pdf_babel/4plot1.pdf :exports both :width 6 :height 4 :session
+n = 200
+df1 = data.frame(Start=1:n, Value=10+rnorm(n))
+four_plot(df1)
+#+end_src
+#+RESULTS:
+[[file:pdf_babel/4plot1.pdf]]
+
+#+begin_src R :results output graphics :file pdf_babel/4plot2.pdf :exports both :width 6 :height 4 :session
+n = 1000
+df1 = data.frame(Start=1:n, Value=10+rnorm(n))
+four_plot(df1)
+#+end_src
+
+#+RESULTS:
+[[file:pdf_babel/4plot2.pdf]]
+
+#+begin_src R :results output graphics :file pdf_babel/4plot3.pdf :exports both :width 6 :height 4 :session
+n = 500
+Start=1:n
+df1 = data.frame(Start=Start, Value=sin(Start)+.15*rnorm(n))
+
+four_plot(df1)
+#+end_src
+
+#+RESULTS:
+[[file:pdf_babel/4plot3.pdf]]
+
+
+#+begin_src R :results output graphics :file pdf_babel/4plot3bis.pdf :exports both :width 6 :height 4 :session
+n = 500
+Start=1:n
+
+four_plot(head(df1,n=100))
+#+end_src
+
+#+RESULTS:
+[[file:pdf_babel/4plot3bis.pdf]]
+
+
+#+begin_src R :results output graphics :file pdf_babel/4plot4.pdf :exports both :width 6 :height 4 :session
+n = 500
+Start=1:n
+df1 = data.frame(Start=Start, Value=20+4*sin(.01*Start)+1*rnorm(n)*4*sin(.01*Start))
+
+four_plot(df1)
+#+end_src
+
+#+RESULTS:
+[[file:pdf_babel/4plot4.pdf]]
+
+#+begin_src R :results output graphics :file pdf_babel/4plot5.pdf :exports both :width 6 :height 4 :session
+n = 500
+Start=1:n
+df1 = data.frame(Start=Start, Value=rgamma(n,shape=.5))
+
+four_plot(df1)
+#+end_src
+
+#+RESULTS:
+[[file:pdf_babel/4plot5.pdf]]
+
+*** Simple Graphical Checks
+#+BEGIN_EXPORT latex
+  \vspace{-.8em}
+  \begin{center}
+    \includegraphics<1>[height=5cm]{pdf_babel/4plot1.pdf}%
+    \includegraphics<2>[height=5cm]{pdf_babel/4plot2.pdf}%
+    \includegraphics<3>[height=5cm]{pdf_babel/4plot3.pdf}%
+    \includegraphics<4>[height=5cm]{pdf_babel/4plot3bis.pdf}%
+    \includegraphics<5>[height=5cm]{pdf_babel/4plot4.pdf}%
+    \includegraphics<6>[height=5cm]{pdf_babel/4plot5.pdf}%
+  \end{center}
+  \vspace{-.8em}
+  %  \hspace{-.05\linewidth}
+  \begin{minipage}{1\linewidth}
+    \small
+#+END_EXPORT
+- Fixed Location :: the run sequence plot should be _flat_ and
+                    _non-drifting_\vspace{-.5em}
+- Fixed Variation ::  the vertical _spread_ in the run sequence plot
+     should _approximately the same_ over the entire horizontal
+     axis\vspace{-.5em}
+- Independence :: the lag plot should be _structureless_\vspace{-.5em}
+- Fixed Distribution :: (, in particular if the /fixed normal
+     distribution/ assumption holds)\vspace{-1.5em}
+  - the histogram should be bell-shaped, and
+  - the normal probability plot should be linear \vspace{-.9em}
+If you see _several modes_, there may be an _hidden parameter_ to take
+into account
+#+LaTeX: \end{minipage}
+*** Temporal Dependancy
+
+#+BEGIN_CENTER
+#+begin_src R :results output graphics :file pdf_babel/deptempo.pdf :exports results :width 6 :height 4 :session
+n = 1000
+Start=1:n
+df1 = data.frame(Start=Start, Value=.5*sin(.1*Start)+.5*rnorm(n))
+#df1 = data.frame(Start=Start, Value=20+4*sin(.01*Start)+1*rnorm(n)*4*sin(.01*Start))
+
+p1 = ggplot(df1,aes(x=Start,y=Value)) + geom_line() + 
+       theme_bw() + ggtitle("Sequence Plot")
+p2 = ggplot(head(df1,n=100),aes(x=Start,y=Value)) + geom_line() +
+       theme_bw() +  ggtitle("Sequence Plot (zoom)")
+grid.arrange(p1,p2,nrow=1)
+#+end_src
+
+#+ATTR_LATEX: :height 5cm
+#+RESULTS:
+[[file:pdf_babel/deptempo.pdf]]
+#+END_CENTER
+
+
+- Should look independent and statistically identical
+- *Periodicity* : May depend on sampling frequency or on clock
+  resolution
+  - Study the period (Fourier), use time series
+- *Danger*: temporal correlation $\leadsto$ study *stationarity*
+*** Detect Trends
+#+BEGIN_CENTER
+
+#+begin_src R :results output graphics :file pdf_babel/unifderiv.pdf :exports results :width 6 :height 4 :session
+n = 500
+Start=1:n
+df1 = data.frame(Start=Start, Value=1+atan(Start/70)*(runif(n,min=.3,max=1)))
+
+ggplot(df1,aes(x=Start,y=Value)) + geom_line() + 
+        theme_bw() + ggtitle("Sequence Plot")
+#+end_src
+
+#+ATTR_LATEX: :height 5cm
+#+RESULTS:
+[[file:pdf_babel/unifderiv.pdf]]
+
+#+END_CENTER
+
+
+- Model the trend: here increases then saturates
+- Possibly remove the trend by compensating it (multiplicative factor
+  here) or removing what can be identified as a _warm-up_
+*** Confidence\dots
+#+BEGIN_EXPORT latex
+\begin{center}
+  \begin{tabular}{c|c}
+    \includegraphics[scale=.32]{images/xkcd_significant_1.png}&
+    \includegraphics[scale=.32]{images/xkcd_significant_2.png}
+  \end{tabular}
+\end{center}
+#+END_EXPORT
+* Design of Experiments                                            :noexport:
+** Early Intuition and Key Concepts
+*** Comparing Two Alternatives (Blocking + Randomization)
+  \begin{itemize}[<+->]
+  \item When comparing A and B for different settings, doing $A, A, A,
+    A, A, A$ and then $B, B, B, B, B, B$ is a bad idea
+  \item You should better do $A, B, \quad A, B,\quad A, B,\quad A, B,
+    \dots $.
+  \item Even better, randomize your run order. You should flip a coin
+    for each configuration and start with A on head and with B on
+    tail\dots
+    \begin{center}
+      $A, B,\quad B, A,\quad  B, A,\quad A, B, \dots $.
+    \end{center}
+    With such design, you will even be able to check whether being the
+    first alternative to run changes something or not
+  \item Each configuration you test should be run on different
+    machines
+    
+    You should record as much information as you can on how the
+    experiments was performed
+  \end{itemize}
+
+*** Experimental Design
+There are two key concepts:
+#+BEGIN_CENTER
+  *replication* and *randomization*
+#+END_CENTER
+You replicate to *increase reliability*. You randomize to *reduce bias*.
+#+BEGIN_CENTER
+  \textbf{If you replicate thoroughly and randomize properly, \\ you will not go far wrong.}
+#+END_CENTER
+\pause
+#+BEGIN_QUOTE
+  \it\small
+  It doesn't matter if you cannot do your own advanced statistical
+  analysis. If you designed your experiments properly, you may be able
+  to find somebody to help you with the statistics.\smallskip
+
+  If your experiments is not properly designed, then no matter how
+  good you are at statistics, you experimental effort will have been
+  wasted.
+#+END_QUOTE
+\vspace{-1em}
+#+BEGIN_CENTER
+  \textbf{No amount of high-powered statistical analysis can turn a bad experiment into a good one.}
+#+END_CENTER
+
+Other important concepts:
+#+LaTeX: \vspace{-.5em}\begin{columns}\begin{column}{.35\linewidth}
+# - *Parsimony*
+- *Pseudo-replication*
+#+LaTeX: \end{column}\begin{column}{.62\linewidth}
+- *Experimental* vs. *observational* data
+#+LaTeX: \end{column}\end{columns}
+*** Parsimony                                                    :noexport:
+The principle of *parsimony* is attributed to the 14th century English
+philosopher *William of Occam*:
+
+  #+BEGIN_QUOTE
+    ``Given a set of equally good explanations for a given phenomenon,
+    the correct explanation is the simplest explanation''  
+  #+END_QUOTE
+  \vspace{-.5em}
+
+  \pause
+  - Models should have as few parameters as possible
+  - Linear models should be preferred to non-linear models
+  - Models should be pared down until they are /minimal adequate/
+
+  \pause
+  This means, a variable should be retained in the model only if it
+  causes a significant increase in deviance when removed from the
+  current model
+  #+BEGIN_QUOTE
+    A model should be as simple as possible. But no simpler.\hspace{-.4em}
+    \begin{flushright}
+      -- A. Einstein
+    \end{flushright}
+  #+END_QUOTE
+*** Replication vs. Pseudo-replication
+Measuring the same configuration several times is not
+replication. It's *pseudo-replication* and is generally biased\smallskip
+
+Instead, test *other* configurations (with a good
+randomization)\medskip
+
+In case of pseudo-replication, here is what you can do:
+- average away the pseudo-replication and carry out your
+  statistical analysis on the means
+- carry out separate analysis for each time period
+- use proper time series analysis
+*** Experimental data vs. Observational data
+You need a good blend of *observation*, *theory* and
+*experiments*\medskip
+
+- Many scientific experiments appear to be carried out with no
+  hypothesis in mind at all, but simply to see what happens.
+
+- This may be OK in the early stages but drawing conclusions on such
+  observations is difficult (large number of equally plausible
+  explanations; without testable prediction no experimental ingenuity;
+  \dots).\pause
+
+
+
+- Strong inference :: Essential steps:
+  1. Formulate a clear hypothesis
+  2. Devise an acceptable test\medskip
+- Weak inference :: It would be silly to disregard all observational
+                    data that do not come from designed
+                    experiments. Often, they are the only we have
+                    (e.g. the trace of a system).
+
+                    But we need to keep the limitations of such data
+                    in mind. It is possible to use it to *derive
+                    hypothesis* but not to *test hypothesis* (\ie *claim
+                    facts*).
+*** Correlation and Causation
+Let me illustrate this inference story with a few examples.
+
+It may be the case that two random variables \rv{X} and \rv{Y} are
+*dependent*
+
+- \Eg Let's pick a student at random and measure its
+  \rv{TimeSpentStudying} and its \rv{TestScore}
+  - In most cases, studying more should improve your test score $\smiley$
+The *correlation* of two variables \rv{X} and \rv{Y} is defined as:
+  #+BEGIN_EXPORT latex
+  \begin{equation*}
+    \text{corr}(\rv{X},\rv{Y}) =
+    \frac{\text{cov}(\rv{X},\rv{Y})}{\sigma_X \sigma_Y} = 
+  \frac{\E[(\rv{X}-\mu_X)(\rv{Y}-\mu_Y)]}{\sigma_X\sigma_Y} 
+  \end{equation*}\vspace{-1em}
+  #+END_EXPORT
+  - The correlation is symmetrical 
+    ($\text{corr}(\rv{X},\rv{Y})=\text{corr}(\rv{Y},\rv{X})$)
+  - The correlation is in $[-1,1]$
+  - $\text{corr}(\rv{Y},\rv{X})=1$ or $-1$ $\Rightarrow$ perfectly linear
+    relationship
+  - \rv{X} independent of \rv{Y} $\Rightarrow \text{corr}(\rv{X},\rv{Y})=0$
+  - \rv{Y} grows when \rv{X} grows $\Rightarrow \text{corr}(\rv{X},\rv{Y})>0$
+
+It is thus very tempting to use *sample correlation* as a way of knowing
+whether some variables are *dependant*
+*** Correlation does not imply Causation
+#+BEGIN_CENTER
+#+ATTR_LATEX: :height 5cm
+file:images/PiratesVsTemp.pdf
+
+\scriptsize
+Mikhail Ryazanov (talk) - PiratesVsTemp.svg. \\
+Licensed under CC BY-SA 3.0 via Wikimedia Commons
+#+END_CENTER
+- 2 variables can be strongly correlated to a third one
+  (\eg year)
+- Btw, what is wrong with this figure? \winkey
+*** Spurious Suicide                                             :noexport:
+#+tblname: spurious_suicide
+| Year     | 1999 | 2000 | 2001 | 2002 | 2003 | 2004 | 2005 | 2006 | 2007 | 2008 | 2009 |
+| Colonies | 2652 | 2622 | 2550 | 2574 | 2599 | 2554 | 2409 | 2394 | 2443 | 2342 | 2498 |
+| Divorces |  3.8 |  3.8 |  3.6 |  3.4 |  3.3 |  3.2 |  2.9 |  2.9 |    3 |  2.8 |    3 |
+
+#+begin_src R :results output graphics :file pdf_babel/spurious_divorce.pdf :exports both :width 7 :height 4 :session :var df=spurious_suicide
+df = df %>% gather(key,val,-V1) %>% spread(V1,val) %>% select(-key)
+cor_label = paste("Correlation: ", round(cor(df$Colonies,df$Divorces), digits=3))
+p1 = ggplot(df,aes(y=Divorces,x=Colonies)) + geom_point() + theme_classic() +
+     geom_smooth(method="lm") + 
+     annotate("text",x=2440,y=3.5,label=cor_label,size=4) +
+     ylab("Divorce rate in South Carolina\nDivorces per 1000 people\n(US Census)") +
+     xlab("Honey producing bee colonies (US)\n Thousands of colonies (USDA)")
+
+df = df %>% gather(Event,Value,-Year)
+p2 = ggplot(df,aes(x=Year,y=Value,color=Event)) + geom_point() + 
+     scale_color_brewer(palette="Set1") +
+     theme_classic() + facet_wrap(~Event,scale="free_y",nrow=2) +
+     geom_line() +  theme(legend.position = "none") + ylab("")
+grid.arrange(p1,p2,nrow=1)
+#+end_src
+
+#+RESULTS:
+[[file:pdf_babel/spurious_divorce.pdf]]
+
+*** Observational vs. Experimental Data Illustration
+
+#+BEGIN_CENTER
+#+ATTR_LATEX: :width .9\linewidth
+file:pdf_babel/spurious_divorce.pdf
+
+#+END_CENTER
+Source: [[http://tylervigen.com/][/Spurious correlations/]]. For the good of the US society, we
+should try to get rid of honey bees \winkey
+*** Correlation does not imply Causation
+
+For any two correlated events, A and B, the following relationships
+are possible:
+- A causes B (direct causation)\hfill$\smiley$
+- A causes B and B causes A (bidirectional or cyclic causation)\hfill$\smiley$
+- A causes C which causes B (indirect causation)\hfill$\smiley$
+- B causes A; (reverse causation)\hfill$\frowny$
+- A and B are consequences of a common cause, but do not cause each
+  other\hfill$\frowny$
+- There is no connection between A and B; it is a 
+  #+LaTeX: coincidence\hfill$\frowny$\vspace{-.2em}%
+  - But *designed experiments* can help you ruling this option out
+
+#+BEGIN_CENTER
+#+ATTR_LATEX: :height 3cm :center nil
+file:images/xkcd_correlation.png
+\qquad\winkey
+#+END_CENTER
+* Other random topics
+** Getting rid of Outliers
+*** Abnormal measurements
+#+begin_src R :results output graphics :file pdf_babel/cauchy_4plot1.pdf :exports none :width 6 :height 4 :session
+n = 1000
+df1 = data.frame(Start=1:n, Value=abs(rcauchy(n)))
+sequence_plot(df1)
+#+end_src
+
+#+RESULTS:
+[[file:pdf_babel/cauchy_4plot1.pdf]]
+
+#+begin_src R :results output graphics :file pdf_babel/cauchy_4plot2.pdf :exports none :width 6 :height 4 :session
+sequence_plot(df1[df1$Value<100,])
+#+end_src
+
+#+RESULTS:
+[[file:pdf_babel/cauchy_4plot2.pdf]]
+
+#+begin_src R :results output graphics :file pdf_babel/cauchy_4plot3.pdf :exports none :width 6 :height 4 :session
+sequence_plot(df1[df1$Value<10,])
+#+end_src
+
+#+RESULTS:
+[[file:pdf_babel/cauchy_4plot3.pdf]]
+
+#+BEGIN_EXPORT latex
+\begin{columns}
+  \begin{column}{.5\linewidth}
+#+END_EXPORT
+- *Rare events:* interpretation
+- Get rid of it using \eg *quantiles*:
+  - What is the good *rejection rate*? (5% ???)
+- A threshold value:
+  - what is the right *threshold*?
+  - \Eg "above Q3 + 1.5 x (IQR)" (boxplot, Tukey, 1977), \ie above
+    $\mu+2\sigma$ for a normal distribution?
+#+BEGIN_EXPORT latex
+  \end{column}
+  \begin{column}{.5\linewidth}
+    \includegraphics<+>[height=4cm]{pdf_babel/cauchy_4plot1.pdf}
+    \includegraphics<+>[height=4cm]{pdf_babel/cauchy_4plot2.pdf}
+    \includegraphics<+>[height=4cm]{pdf_babel/cauchy_4plot3.pdf}
+  \end{column}
+\end{columns}
+#+END_EXPORT
+\scriptsize
+    - Reject values larger than 100 $\leadsto$ .6% of rejection
+    - Reject values larger than  50 $\leadsto$ 1% of rejection
+    - Reject values larger than  10 $\leadsto$ 6% of rejection
+\normalsize
+#+LaTeX: \uncover<3>{%
+Actually, I generated these samples using the /Cauchy distribution/,
+which is pathological for most idea you'll come up with \winkey
+
+There is *no mathematical definition of what constitutes an
+outlier*. It's related to the experimenter's interpretation and is
+subjective\dots
+#+LaTeX: }
+
+** Summarizing the distribution
+*** Summarizing the distribution
+#+begin_src R :results output graphics :file pdf_babel/dist_summary1.pdf :exports none :width 6 :height 3 :session
+library(gridExtra)
+dist_summary = function (df,binwidth=.5,trim=FALSE) {
+  p1 = ggplot(data=df,aes(x=Time,fill=Alternative)) + 
+       geom_histogram(binwidth=binwidth,color="black") + 
+       theme_bw() + guides(fill = "none")
+  p2 = ggplot(data=df,aes(x=Alternative,y=Time,fill=Alternative)) + 
+       geom_jitter(alpha=.4,position = position_jitter(width = .2)) + 
+       geom_boxplot(width=.4) + theme_bw() + guides(fill = "none")
+  p3 = ggplot(data=df,aes(x=Alternative,y=Time,fill=Alternative)) + 
+       geom_jitter(alpha=.4,position = position_jitter(width = .2)) + 
+       geom_dotplot(binaxis = "y", stackdir = "center") + 
+       geom_violin(scale="area",alpha=.4,trim=trim) + # 
+       theme_bw() + guides(fill = "none")  + ggtitle("Please avoid\n this...")
+  grid.arrange(p1,p2,p3,nrow=1,widths=c(2,1,1))
+}
+dist_summary(dfgg[dfgg$Alternative=="A",])
+#+end_src
+
+#+RESULTS:
+[[file:pdf_babel/dist_summary1.pdf]]
+
+#+begin_src R :results output graphics :file pdf_babel/dist_summary2.pdf :exports none :width 6 :height 3 :session
+n = 100
+df = data.frame(Alternative = "A", Time = floor(2*runif(n)) + .05*rnorm(n))
+dist_summary(df,binwidth=.1,trim=T)
+#+end_src
+
+#+RESULTS:
+[[file:pdf_babel/dist_summary2.pdf]]
+
+
+#+BEGIN_EXPORT latex
+\begin{center}
+  \includegraphics<+>[height=4cm]{pdf_babel/dist_summary1.pdf}
+  \includegraphics<+>[height=4cm]{pdf_babel/dist_summary2.pdf}
+\end{center}
+#+END_EXPORT
+
+What is the shape of the histogram:
+- Uni/multi-modal:
+  - If uni-modal, summarize with \alert{central tendancy} (mean, mode,
+    median)
+  - Symmetrical or not ($\leadsto$ skewness)
+  - Flat of not ($\leadsto$ kurtosis)
+
+If uni-modal you can go for a boxplot but avoid other fancy plots
+unless you know what you do...
+** Estimating something else than the mean                        :noexport:
+*** Biased and unbiased estimators...
+- Expected value :: the /sample mean/ is unbiased but is "sensitive" to
+                    outliers. This is not an excuse for estimating
+                    something else!  Furthermore, there is an easy way
+                    to compute confidence intervals.
+- Mode :: the /naive estimate/ is unstable and depends on the
+          histogram's bin width. Still ongoing research on this:\\
+  #+BEGIN_EXPORT latex
+  \scalebox{.95}{\bottomcite{\Eg Bickela and Frühwirthb, \textit{On a fast, robust
+      estimator of the mode: Comparisons to other robust estimators with
+      applications}, Computational Statistics \& Data Analysis 2006}}
+  #+END_EXPORT
+- Median :: the /sample median/ is robust to outliers but it is quite
+            sensitive to discrete distributions\dots There exists other
+            more involved estimators but is median really what you
+            want to estimate?
+- Minimum and Maximum :: the /sample maximum/ is always too small, hence
+     it is biased...
+- Variance :: =var= is a unbiased estimator of variance but the "natural
+              formula" for standard deviation (e.g., in ~np.std~) is a
+              biased estimator.. Unbiasing depends on the distribution
+              so just overestimate...
+** Statistical Tests                                              :noexport:
+*** Tests
+We have seen how to build *estimators* of specific characteristics of
+$f_X$ based on observations of \rv{X}
+- Having an estimator is worth only if you can provide *confidence* on
+  this estimation
+
+Estimates can be used to *test* hypothesis
+- We have seen how we could test whether $\mu_A < \mu_B$ from estimates of
+  $\mu_A$ and $\mu_B$
+
+But there may be other more efficient ways to test such hypothesis
+- if you know observations are paired
+- if you know something about the underlying distribution
+
+Other kind of complex hypothesis may tested
+- median(\rv{A}) = median(\rv{B}), $\E[\rv{A}] = \E[\rv{B}]$, \dots
+- \rv{A} and \rv{B} follow the same distribution
+
+\bf We could give a whole lecture on this topic\dots Only use the tests you
+truly understand
+** References
+*** Roadmap for a good data analysis (Jain)
+1. Plot the sample (various representations)
+2. Describe the results (data analysis)
+3. Preliminary processing : remove or flag outliers, estimate or flag
+   missing values
+4. Propose a stochastic model. Establish the hypothesis: independence
+   (time correlation, auto-correlation), stationarity, same
+   probability law
+5. Summarize data by a histogram
+6. Comment the shape (modal/skewness/flatness/...)
+7. Estimate the central tendency of the sample : choose the central
+   index
+8. Estimate the accuracy of the result (confidence intervals)
+9. Propose a visualization
+
+

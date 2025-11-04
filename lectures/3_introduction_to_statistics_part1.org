@@ -28,7 +28,7 @@
   - Naive way for Y/X = [ymin/xmax:ymax/xmin].
   - Smarter way:
     http://stats.stackexchange.com/questions/164738/confidence-interval-of-ratio-estimator
-* A (mathematical) probabilistic model
+* A (mathematical) probabilistic model                             :noexport:
 ** 
 *** Probabilities
 \vspace{-.3em}
@@ -393,7 +393,6 @@ ggplot(df, aes(x = x, y = y, color = factor(valid))) + geom_point() +
 #+end_src
 
 #+RESULTS:
-[[file:pdf_babel/CI_illustration.pdf]]
 
 #+BEGIN_EXPORT latex
 \begin{overlayarea}{\linewidth}{4.5cm}
@@ -572,7 +571,7 @@ ggplot(dfgg,aes(x=Alternative,y=Time,color=Alternative)) +
 [[file:pdf_babel/comparing_2_alternatives2.pdf]]
 *** How to compute and plot CI in R: output
 [[file:pdf_babel/comparing_2_alternatives2.pdf]]
-** What should I take care of?
+** What should I take care of?                                    :noexport:
 *** CLT hypothesis
 #+begin_src R :results output graphics :file pdf_babel/sample_var.pdf :exports none :width 5 :height 3 :session
 set.seed(42)
@@ -860,7 +859,7 @@ ggplot(df1,aes(x=Start,y=Value)) + geom_line() +
   \end{tabular}
 \end{center}
 #+END_EXPORT
-* Design of Experiments
+* Design of Experiments                                            :noexport:
 ** Early Intuition and Key Concepts
 *** Comparing Two Alternatives (Blocking + Randomization)
   \begin{itemize}[<+->]
@@ -1071,7 +1070,7 @@ are possible:
 file:images/xkcd_correlation.png
 \qquad\winkey
 #+END_CENTER
-* Other random topics
+* Other random topics                                              :noexport:
 ** Getting rid of Outliers
 *** Abnormal measurements
 #+begin_src R :results output graphics :file pdf_babel/cauchy_4plot1.pdf :exports none :width 6 :height 4 :session
@@ -1181,7 +1180,7 @@ What is the shape of the histogram:
 
 If uni-modal you can go for a boxplot but avoid other fancy plots
 unless you know what you do...
-** Estimating something else than the mean
+** Estimating something else than the mean                        :noexport:
 *** Biased and unbiased estimators...
 - Expected value :: the /sample mean/ is unbiased but is "sensitive" to
                     outliers. This is not an excuse for estimating
@@ -1204,7 +1203,7 @@ unless you know what you do...
               formula" for standard deviation (e.g., in ~np.std~) is a
               biased estimator.. Unbiasing depends on the distribution
               so just overestimate...
-** Statistical Tests
+** Statistical Tests                                              :noexport:
 *** Tests
 We have seen how to build *estimators* of specific characteristics of
 $f_X$ based on observations of \rv{X}
