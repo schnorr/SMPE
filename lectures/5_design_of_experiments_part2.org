@@ -601,7 +601,7 @@ plot(d5_maximin , select = c( "A","B" ), main="LHS design")
 library(DoE.wrapper);   set.seed(42);
 d5_HD = lhs.design( type= "maximin" , nruns= 100 ,nfactors= 3 ,
     seed= 42 , factor.names=list( A=c(0,1),B=c(0,1),C=c(0,1) ) )
-Response5 = 10 + 2*as.numeric(d5_HD$A) + 3*as.numeric(d5_HD$B)*as.numeric(d5_HD$C) + 
+hyperResponse5 = 10 + 2*as.numeric(d5_HD$A) + 3*as.numeric(d5_HD$B)*as.numeric(d5_HD$C) + 
     rnorm(nrow(d5_HD),sd=1)
 d5_HD <- add.response(d5_HD, Response5, replace=TRUE)
 plot(d5_HD , select = c( "A","B","C" ), main="LHS design")
@@ -823,7 +823,7 @@ philosopher *William of Occam*:
       -- A. Einstein
     \end{flushright}
   #+END_QUOTE 
-** Exploiting and Reducing Variance
+** Exploiting and Reducing Variance                               :noexport:
 *** Working out a toy example
 \scriptsize
 #+begin_src R :results output :session :exports both
@@ -960,7 +960,7 @@ explaining variance
   the results*
 - The expected value will be the same but the variance will be reduced
  
-** Discussing the Shape of the Model
+** Discussing the Shape of the Model                              :noexport:
 *** What if even polynomial models seem inadequate?
 \scriptsize
 #+begin_src R :results output :session :exports none
