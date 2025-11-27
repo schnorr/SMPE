@@ -1005,7 +1005,7 @@ This is a *very biased /estimator/* so use with care
   library(reshape)
   library(scales)
 
-  simu = read.table("/home/alegrand/org/data/2a/96f254-ac05-4075-a033-642ec547c95b/res_simu_and_model.txt",header=T)
+  simu = read.table("data/res_simu_and_model.txt",header=T)
 
   simu2 = simu[!names(simu) %in% c("CM")]
   dfsimul <- melt(simu2, id=c("wflName","nbPart","c"))
