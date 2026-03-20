@@ -130,7 +130,7 @@
 \let\geq=\geqslant
 #+END_EXPORT
 :end:
-* Motivation and Introduction
+* Motivation and Introduction                                      :noexport:
 ** Public Evidence for a Lack of Reproducibility
 \small
 #+LaTeX: \vspace{-.3cm}\begin{overlayarea}{1\linewidth}{7cm}
@@ -429,7 +429,7 @@ increasingly numerous and complex.
   \uncover<+>{\bf Reproducible Research = Bridging the Gap by working Transparently}
 \end{center}
 #+END_EXPORT
-* Tools
+* Tools                                                            :noexport:
 ** Existing Tools, Emerging Standards
 \vspace{1em}
 #+LaTeX: \begin{columns}\begin{column}[t]{.4\linewidth}\centering
@@ -600,7 +600,7 @@ Journals]]". Applied Clinical Informatics. 4 (4), 2013
 #+LaTeX: \raisebox{-1.4ex}{\includegraphics[height=.8cm]{images/logo/gitlab_logo.png}}
 $=$ awesome collaborations $\ne$ archive
 
-* Reproducibility
+* Reproducibility                                                  :noexport:
 ** Different (but Converging) Reproducibility Concerns
 Reproducibility/robustness of the scientific fact, the statistical
 analysis, the computation, the observation, the process, \dots ?\pause
@@ -627,7 +627,7 @@ $\winkey$
   #+BEGIN_CENTER
   Software factories, Archives, and Provenance Tracking tools
   #+END_CENTER
-* Closure
+* Closure                                                          :noexport:
 ** Changing Research Practices
 #+LaTeX: \hbox{\bf\normalsize \uline{Soft. Engineering}, \uline{Statistics}, and Reproducible Research in the \alert{curricula}}
 
@@ -732,6 +732,15 @@ computations and data]], Learning Lab Inria
 :BEAMER_env: ignoreheading
 :END:
 \vspace{-.7cm}
+
+** Rede Brasileira de Reprodutibilidade (RBR), participe!
+
+#+begin_center
+https://www.reprodutibilidade.org/
+#+end_center
+
+#+latex_attr: :width \linewidth
+[[./images/rbr.png]]
 
 * Emacs Setup                                                      :noexport:
 This document has local variables in its postembule, which should
